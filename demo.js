@@ -309,6 +309,8 @@ $(function()
 			var valid = !(t.getDay() == 0 || t.getDay() == 6);  //disable saturday and sunday
 			var _class = '';
 			var _tooltip = valid ? '' : 'weekends are disabled';
+			// allow span across later half of month
+			valid = valid || (t.getDate()>15?null:valid);
 			return [valid,_class,_tooltip];
 		}
 	});
