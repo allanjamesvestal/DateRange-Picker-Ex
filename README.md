@@ -1,7 +1,7 @@
 ## jQuery Date Range Picker Plugin
-
-[![Bower Version](https://img.shields.io/bower/v/jquery-date-range-picker.svg?maxAge=3600)]()
-[![License](https://img.shields.io/github/license/longbill/jquery-date-range-picker.svg?maxAge=2592000)]()
+[![GitHub issues](https://img.shields.io/github/issues/Adam5Wu/jquery-date-range-picker.svg)](https://github.com/Adam5Wu/jquery-date-range-picker/issues)
+[![GitHub forks](https://img.shields.io/github/forks/Adam5Wu/jquery-date-range-picker.svg)](https://github.com/Adam5Wu/jquery-date-range-picker/network)
+[![License](https://img.shields.io/github/license/Adam5Wu/jquery-date-range-picker.svg)](./LICENSE.txt)
 
 jQuery Date Range Picker is a jQuery plugin that allows user to select a date range.
 
@@ -12,9 +12,9 @@ jQuery Date Range Picker is a jQuery plugin that allows user to select a date ra
 * Written by Chunlong ( jszen.com )
 * I accept further customization job if you require more functions. Please contact me via longbill.cn@gmail.com
 
-##[Documentation & Demo](http://longbill.github.io/jquery-date-range-picker/)
+##[Documentation & Demo](https://adam5wu.github.io/jquery-date-range-picker/)
 
-![screenshot](https://raw.github.com/longbill/jquery-date-range-picker/master/preview.jpg)
+![screenshot](https://raw.github.com/Adam5Wu/jquery-date-range-picker/master/preview.jpg)
 
 #### How to setup this project on your development machine
 * Install node.js [Ubuntu/Mac](https://github.com/creationix/nvm) , [Windows](https://nodejs.org/en/download/)
@@ -28,7 +28,7 @@ npm install -g gulp@3.9.1
 ```
 * Clone this project
 ```
-git clone https://github.com/longbill/jquery-date-range-picker.git
+git clone https://github.com/Adam5Wu/jquery-date-range-picker.git
 cd jquery-date-range-picker
 ```
 * Install local dependencies
