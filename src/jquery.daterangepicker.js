@@ -730,7 +730,7 @@
 						return $(this).val();
 					},
 					setValue : function (s) {
-						if (!$(this).attr('readonly') && !$(this).is(':disabled') && s != $(this).val()) {
+						if (!$(this).is(':disabled') && s != $(this).val()) {
 							$(this).val(s);
 						}
 					},
@@ -931,7 +931,6 @@
 
 				//showSelectedInfo();
 
-
 				var defaultTopText = '';
 				if (opt.singleDate)
 					defaultTopText = lang('default-single');
@@ -952,7 +951,8 @@
 				}
 
 				setTimeout(function () {
-					updateCalendarWidth();
+					//Do not use undisplayed items' dimension
+					//updateCalendarWidth();
 					initiated = true;
 				}, 0);
 
@@ -1231,14 +1231,13 @@
 							defaults[1] = defaults[1].replace(/(\d+)(th|nd|st)/, '$1');
 						}
 					}
-					// set initiated  to avoid triggerring datepicker-change event
+					// set initiated to avoid triggerring datepicker-change event
 					initiated = false;
 					if (defaults.length >= 2) {
 						setDateRange(getValidValue(defaults[0], ___format, moment.locale(opt.language)), getValidValue(defaults[1], ___format, moment.locale(opt.language)));
 					} else if (defaults.length == 1 && opt.singleDate) {
 						setSingleDate(getValidValue(defaults[0], ___format, moment.locale(opt.language)));
 					}
-
 					initiated = true;
 				}
 			}
@@ -1258,7 +1257,7 @@
 				var w1 = box.find('.month1').width();
 				var w2 = box.find('.gap').width() + (gapMargin ? gapMargin * 2 : 0);
 				var w3 = box.find('.month2').width();
-				box.find('.month-wrapper').width(w1 + w2 + w3);
+				box.find('.month-wrapper').width(w1 + w2 + w3 + 2);
 			}
 
 			function renderTime(name, date) {
@@ -1353,6 +1352,8 @@
 
 			function dayClicked(day) {
 				if (day.hasClass('invalid'))
+					return;
+				if (opt.startWeek)
 					return;
 				var time = day.attr('time');
 				day.addClass('checked');
@@ -1669,7 +1670,8 @@
 			}
 
 			function checkSelectionValid() {
-				var days = Math.ceil((opt.end - opt.start) / 86400000) + 1;
+				// Use a more lenient calculation mode, works with day-light saving
+				var days = Math.floor((opt.end - opt.start + 43200000) / 86400000) + 1;
 				if (opt.singleDate) { // Validate if only start is there
 					if (opt.start && !opt.end)
 						box.find('.drp_top-bar').removeClass('error').addClass('normal');
@@ -1693,9 +1695,9 @@
 				}
 
 				if ((opt.singleDate && opt.start && !opt.end) || (!opt.singleDate && opt.start && opt.end)) {
-					box.find('.apply-btn').removeClass('disabled');
+					box.find('.apply-btn').removeAttr('disabled');
 				} else {
-					box.find('.apply-btn').addClass('disabled');
+					box.find('.apply-btn').attr('disabled', 'disabled');
 				}
 
 				if (opt.batchMode) {
@@ -1721,7 +1723,7 @@
 				}
 				var dateRange;
 				if (opt.start && opt.singleDate) {
-					box.find('.apply-btn').removeClass('disabled');
+					box.find('.apply-btn').removeAttr('disabled');
 					dateRange = getDateString(new Date(opt.start));
 					opt.setValue.call(selfDom, dateRange, getDateString(new Date(opt.start)), getDateString(new Date(opt.end)));
 
@@ -1733,7 +1735,7 @@
 					}
 				} else if (opt.start && opt.end) {
 					box.find('.selected-days').show().find('.selected-days-num').html(countDays(opt.end, opt.start));
-					box.find('.apply-btn').removeClass('disabled');
+					box.find('.apply-btn').removeAttr('disabled');
 					dateRange = getDateString(new Date(opt.start)) + opt.separator + getDateString(new Date(opt.end));
 					opt.setValue.call(selfDom, dateRange, getDateString(new Date(opt.start)), getDateString(new Date(opt.end)));
 					if (initiated && !silent) {
@@ -1744,9 +1746,9 @@
 						});
 					}
 				} else if (forceValid) {
-					box.find('.apply-btn').removeClass('disabled');
+					box.find('.apply-btn').removeAttr('disabled');
 				} else {
-					box.find('.apply-btn').addClass('disabled');
+					box.find('.apply-btn').attr('disabled', 'disabled');
 				}
 			}
 
@@ -2027,7 +2029,7 @@
 						'<div class="default-top">default</div>';
 					}
 
-					html += '<input type="button" class="apply-btn disabled' + getApplyBtnClass() + '" value="' + lang('apply') + '" />';
+					html += '<input type="button" disabled class="apply-btn' + getApplyBtnClass() + '" value="' + lang('apply') + '" />';
 					html += '</div>';
 				}
 
@@ -2330,6 +2332,13 @@
 							today.tooltip = _r[2] || '';
 							if (today.tooltip !== '')
 								today.extraClass += ' has-tooltip ';
+						}
+						if (opt.startOfWeek == 'monday') {
+							if (day >= 5)
+								today.extraClass += ' weekend ';
+						} else {
+							if (day == 0 || day == 6)
+								today.extraClass += ' weekend ';
 						}
 
 						var todayDivAttr = {

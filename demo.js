@@ -368,7 +368,8 @@ $(function()
 	$('#date-range17').dateRangePicker(
 	{
 		stickyMonths: true,
-		showShortcuts: false
+		startDate: '2013-01-10',
+		endDate: '2013-05-10'
 	});
 
 	$('#date-range18').dateRangePicker(
