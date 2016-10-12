@@ -138,7 +138,8 @@ $(function () {
 					return [start, end];
 				}
 			},
-			//if only return an array of one date, it will display the month which containing the date. and it will not select any date range
+			//if only return an array of one date, it will display the month which containing the date.
+			//will not select any date range
 			{
 				name : 'Oct 2014',
 				dates : function () {
@@ -163,13 +164,47 @@ $(function () {
 		shortcuts : {
 			'prev-days' : [3, 5, 7],
 			'prev' : ['week', 'month', 'year'],
-			'next-days' : null,
-			'next' : null
 		}
 	});
 	$('#date-range103').dateRangePicker({
 		autoClose : true
-	});
+	}).bind('datepicker-first-date-selected', function (event, obj) {
+		/* This event will be triggered when first date is selected */
+		console.log('first-date-selected', obj);
+		// obj will be something like this:
+		// {
+		// 		date1: (Date object of the earlier date)
+		// }
+	}).bind('datepicker-change', function (event, obj) {
+		/* This event will be triggered when second date is selected */
+		console.log('change', obj);
+		// obj will be something like this:
+		// {
+		// 		date1: (Date object of the earlier date),
+		// 		date2: (Date object of the later date),
+		//	 	value: "2013-06-05 to 2013-06-07"
+		// }
+	})
+	.bind('datepicker-apply', function (event, obj) {
+		/* This event will be triggered when user clicks on the apply button */
+		console.log('apply', obj);
+	})
+	.bind('datepicker-close', function () {
+		/* This event will be triggered before date range picker close animation */
+		console.log('before close');
+	})
+	.bind('datepicker-closed', function () {
+		/* This event will be triggered after date range picker close animation */
+		console.log('after close');
+	})
+	.bind('datepicker-open', function () {
+		/* This event will be triggered before date range picker open animation */
+		console.log('before open');
+	})
+	.bind('datepicker-opened', function () {
+		/* This event will be triggered after date range picker open animation */
+		console.log('after open');
+	}); ;
 	$('#date-range4-1').dateRangePicker({
 		language : 'custom'
 	});
@@ -217,15 +252,87 @@ $(function () {
 		alwaysOpen : true
 	});
 	$('#date-range13').dateRangePicker({
-		autoClose : true,
+		autoClose : false,
 		singleDate : true,
 		showShortcuts : false
+	}).bind('datepicker-first-date-selected', function (event, obj) {
+		/* This event will be triggered when first date is selected */
+		console.log('first-date-selected', obj);
+		// obj will be something like this:
+		// {
+		// 		date1: (Date object of the earlier date)
+		// }
+	}).bind('datepicker-change', function (event, obj) {
+		/* This event will be triggered when second date is selected */
+		console.log('change', obj);
+		// obj will be something like this:
+		// {
+		// 		date1: (Date object of the earlier date),
+		// 		date2: (Date object of the later date),
+		//	 	value: "2013-06-05 to 2013-06-07"
+		// }
+	})
+	.bind('datepicker-apply', function (event, obj) {
+		/* This event will be triggered when user clicks on the apply button */
+		console.log('apply', obj);
+	})
+	.bind('datepicker-close', function () {
+		/* This event will be triggered before date range picker close animation */
+		console.log('before close');
+	})
+	.bind('datepicker-closed', function () {
+		/* This event will be triggered after date range picker close animation */
+		console.log('after close');
+	})
+	.bind('datepicker-open', function () {
+		/* This event will be triggered before date range picker open animation */
+		console.log('before open');
+	})
+	.bind('datepicker-opened', function () {
+		/* This event will be triggered after date range picker open animation */
+		console.log('after open');
 	});
 	$('#date-range13-2').dateRangePicker({
 		autoClose : true,
 		singleDate : true,
 		showShortcuts : false,
 		singleMonth : true
+	}).bind('datepicker-first-date-selected', function (event, obj) {
+		/* This event will be triggered when first date is selected */
+		console.log('first-date-selected', obj);
+		// obj will be something like this:
+		// {
+		// 		date1: (Date object of the earlier date)
+		// }
+	}).bind('datepicker-change', function (event, obj) {
+		/* This event will be triggered when second date is selected */
+		console.log('change', obj);
+		// obj will be something like this:
+		// {
+		// 		date1: (Date object of the earlier date),
+		// 		date2: (Date object of the later date),
+		//	 	value: "2013-06-05 to 2013-06-07"
+		// }
+	})
+	.bind('datepicker-apply', function (event, obj) {
+		/* This event will be triggered when user clicks on the apply button */
+		console.log('apply', obj);
+	})
+	.bind('datepicker-close', function () {
+		/* This event will be triggered before date range picker close animation */
+		console.log('before close');
+	})
+	.bind('datepicker-closed', function () {
+		/* This event will be triggered after date range picker close animation */
+		console.log('after close');
+	})
+	.bind('datepicker-open', function () {
+		/* This event will be triggered before date range picker open animation */
+		console.log('before open');
+	})
+	.bind('datepicker-opened', function () {
+		/* This event will be triggered after date range picker open animation */
+		console.log('after open');
 	});
 	$('#date-range14').dateRangePicker({
 		batchMode : 'week',
@@ -303,9 +410,9 @@ $(function () {
 	$('#date-range22').dateRangePicker({
 		showDateFilter : function (time, date) {
 			return '<div style="padding:0 5px;">\
-															<span style="font-weight:bold">' + date + '</span>\
-															<div style="opacity:0.3;">$' + Math.round(Math.random() * 999) + '</div>\
-														</div>';
+																								<span style="font-weight:bold">' + date + '</span>\
+																								<div style="opacity:0.3;">$' + Math.round(Math.random() * 999) + '</div>\
+																							</div>';
 		}
 	});
 	$('#date-range23').dateRangePicker({

@@ -290,9 +290,8 @@
 	color: white;
 	line-height: initial;
 }
-.date-picker-wrapper .drp_top-bar .apply-btn:disabled
+.date-picker-wrapper .drp_top-bar .apply-btn.disabled
 {
-	cursor: initial;
 	color: #606060;
 	border: solid 1px #b7b7b7;
 	background: white;
