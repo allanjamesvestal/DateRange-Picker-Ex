@@ -824,25 +824,28 @@
 			var initiated = false;
 			var self = this;
 			var selfDom = $(self).get(0);
-			var domChangeTimer;
-			$(this).unbind('.datepicker').bind('click.datepicker', function (evt) {
-				var isOpen = box.is(':visible');
-				if (!isOpen)
-					open(opt.duration);
-			}).bind('change.datepicker', function (evt) {
+			var domChangeTimer = null;
+			$(this).unbind('.datepicker')
+			.bind('change.datepicker', function (evt) {
 				checkAndSetDefaultValue();
 			}).bind('keyup.datepicker', function () {
-				try {
-					clearTimeout(domChangeTimer);
-				} catch (e) {}
+				clearTimeout(domChangeTimer);
 				domChangeTimer = setTimeout(function () {
+						domChangeTimer = null;
 						checkAndSetDefaultValue();
-					}, 2000);
+					}, 200);
 			});
 			init_datepicker.call(this);
 			if (opt.alwaysOpen) {
-				open(0);
+				openDataPicker(0);
+			} else {
+				$(this).bind('click.datepicker', function (evt) {
+					if (!$(self).data('date-picker-opened')) {
+						openDataPicker(opt.duration);
+					}
+				})
 			}
+
 			// expose some api
 			$(this).data('dateRangePicker', {
 				setStart : function (d1, silent) {
@@ -885,16 +888,15 @@
 			});
 			$(window).bind('resize.datepicker', calcPosition);
 			return this;
-			function IsOwnDatePickerClicked(evt, selfObj) {
-				return (selfObj.contains(evt.target) || evt.target == selfObj || (selfObj.childNodes != undefined && $.inArray(evt.target, selfObj.childNodes) >= 0));
+
+			function IsClickContained(evt, selfObj) {
+				return (selfObj.contains(evt.target) || evt.target == selfObj ||
+					(selfObj.childNodes != undefined && $.inArray(evt.target, selfObj.childNodes) >= 0));
 			}
 			function init_datepicker() {
 				var self = this;
-				if ($(this).data('date-picker-opened')) {
-					closeDatePicker();
-					return;
-				}
-				$(this).data('date-picker-opened', true);
+				$(self).data('date-picker-opened', false);
+
 				box = createDom().hide();
 				box.append('<div class="date-range-length-tip"></div>');
 				box.delegate('.day', 'mouseleave', function () {
@@ -944,16 +946,20 @@
 					//updateCalendarWidth();
 					initiated = true;
 				}, 0);
-				box.click(function (evt) {
-					evt.stopPropagation();
-				});
-				//if user click other place of the webpage, close date range picker window
-				$(document).bind('click.datepicker', function (evt) {
-					if (!IsOwnDatePickerClicked(evt, self[0])) {
-						if (box.is(':visible'))
-							closeDatePicker();
-					}
-				});
+				//Allow click event to reach higher level (otherwise de-focusing close will not work properly)
+				//box.click(function (evt) {
+				//	evt.stopPropagation();
+				//});
+				if (!opt.alwaysOpen) {
+					//if user click other place of the webpage, close date range picker window
+					$(document).bind('click.datepicker', function (evt) {
+						if (!IsClickContained(evt, self[0]) && !IsClickContained(evt, box[0])) {
+							if ($(self).data('date-picker-opened')) {
+								closeDatePicker();
+							}
+						}
+					});
+				}
 				box.find('.next').click(function () {
 					if (!opt.stickyMonths)
 						gotoNextMonth(this);
@@ -1150,7 +1156,9 @@
 			function getDatePicker() {
 				return box;
 			}
-			function open(animationTime) {
+			function openDataPicker(animationTime) {
+				$(self).data('date-picker-opened', true);
+
 				calcPosition();
 				redrawDatePicker();
 				checkAndSetDefaultValue();
