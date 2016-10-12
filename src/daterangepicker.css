@@ -169,7 +169,7 @@
 	position: relative;
 	z-index: 1;
 	width: 12px;
-	background-color: red;
+	/*background-color: red;*/
 	font-size: 0;
 	line-height: 0;
 	float: left;
