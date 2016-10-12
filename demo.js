@@ -249,7 +249,8 @@ $(function () {
 	$('#date-range12').dateRangePicker({
 		inline : true,
 		container : '#date-range12-container',
-		alwaysOpen : true
+		alwaysOpen : true,
+		autoClose : true
 	});
 	$('#date-range13').dateRangePicker({
 		autoClose : false,
@@ -409,20 +410,16 @@ $(function () {
 	});
 	$('#date-range22').dateRangePicker({
 		showDateFilter : function (time, date) {
-			return '<div style="padding:0 5px;">\
-																								<span style="font-weight:bold">' + date + '</span>\
-																								<div style="opacity:0.3;">$' + Math.round(Math.random() * 999) + '</div>\
-																							</div>';
+			return '<div style="padding:0 5px;">' +
+			'<span style="font-weight:bold">' + date + '</span>' +
+			'<div style="opacity:0.3;">$' + Math.round(Math.random() * 999) + '</div>' +
+			'</div>';
 		}
 	});
 	$('#date-range23').dateRangePicker({
 		singleMonth : true,
 		showShortcuts : false,
 		showTopbar : false
-	});
-	$('#date-range5-2').dateRangePicker({
-		minDays : 3,
-		maxDays : 7
 	});
 	$('#date-range24').dateRangePicker({
 		showWeekNumbers : true

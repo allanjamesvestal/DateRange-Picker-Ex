@@ -909,9 +909,6 @@
 				} else {
 					box.addClass('inline-wrapper');
 				}
-				if (opt.alwaysOpen) {
-					box.find('.apply-btn').hide();
-				}
 				var defaultTime = getDefaultTime();
 				resetMonthsView(defaultTime);
 				if (opt.time.enabled) {
