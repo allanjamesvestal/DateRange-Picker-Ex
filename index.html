@@ -8,7 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="src/daterangepicker.css" />
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment.min.js" type="text/javascript"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment-with-locales.min.js" type="text/javascript"></script>
 		<script src="src/jquery.daterangepicker.js"></script>
 		<script src="demo.js"></script>
 		<style type="text/css">
@@ -132,7 +132,8 @@
 				<a href="#" class="show-option">Show Config</a>
 <pre class="options">
 {
-	language : 'cn'
+	language : 'cn',
+	showWeekNumbers : true
 }
 </pre>
 			</div>
@@ -345,13 +346,12 @@
 				<a href="#" class="show-option">Show Config</a>
 <pre class="options">
 {
-	inline : true,
-	container : '#date-range12-container',
+	container : $('#date-range12-container'),
 	alwaysOpen : true
 	autoClose : true
 }				
 </pre>
-				<div id="date-range12-container" style="width:456px;"></div>
+				<div id="date-range12-container"></div>
 			</div>
 			<div class="demo">
 				Single Date mode: <input id="date-range13" size="40" value="2015-03-01">
@@ -431,43 +431,43 @@ $('#date-range16').dateRangePicker(
 {
 	showShortcuts : false,
 	format : 'YYYY-MM-DD'
-}).bind('datepicker-change', function(evt, obj) {
+}).bind('DRPick-change', function(evt, obj) {
 	alert('date1: ' + obj.date1 + ' / date2: ' + obj.date2);
 });
 $('#date-range16-open').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('dateRangePicker').open();
+	$('#date-range16').data('DRPick').open();
 });
 $('#date-range16-close').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('dateRangePicker').close();
+	$('#date-range16').data('DRPick').close();
 });
 $('#date-range16-set').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('dateRangePicker').setDateRange('2013-11-20','2014-08-25');
+	$('#date-range16').data('DRPick').setDateRange('2013-11-20','2014-08-25');
 });
 $('#date-range16-set-silent').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('dateRangePicker').setDateRange('2014-11-03','2015-02-12', true);
+	$('#date-range16').data('DRPick').setDateRange('2014-11-03','2015-02-12', true);
 });
 $('#date-range16-clear').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('dateRangePicker').clear();
+	$('#date-range16').data('DRPick').clear();
 });
 $('#date-range16-destroy').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('dateRangePicker');
+	$('#date-range16').data('DRPick');
 });
 $('#date-range16-reset').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('dateRangePicker').resetMonthsView();
+	$('#date-range16').data('DRPick').resetMonthsView();
 });
 </pre>
 			</div>
@@ -664,6 +664,7 @@ $('#date-range16-reset').click(function(evt)
 <pre>
 {
 	autoClose : false,
+	watchValueChange: true,
 	format : 'YYYY-MM-DD',
 	separator : ' to ',
 	language : 'auto',
@@ -695,9 +696,9 @@ $('#date-range16-reset').click(function(evt)
 		//'next' : ['week','month','year']
 	},
 	customShortcuts : [],
-	inline : false,
-	container : 'body',
+	container : undefined,
 	alwaysOpen : false,
+	dropTrigger : true,
 	singleDate : false,
 	lookBehind : false,
 	batchMode : false,
@@ -819,7 +820,7 @@ $('#date-range16-reset').click(function(evt)
 <pre>
 $('#dom-id')
 .dateRangePicker()
-.bind('datepicker-first-date-selected', function(event, obj)
+.bind('DRPick-first-date', function(event, obj)
 {
 	/* This event will be triggered when first date is selected */
 	console.log(obj);
@@ -828,7 +829,7 @@ $('#dom-id')
 	// 		date1: (Date object of the earlier date)
 	// }
 })
-.bind('datepicker-change',function(event,obj)
+.bind('DRPick-change',function(event,obj)
 {
 	/* This event will be triggered when second date is selected */
 	console.log(obj);
@@ -839,27 +840,27 @@ $('#dom-id')
 	//	 	value: "2013-06-05 to 2013-06-07"
 	// }
 })
-.bind('datepicker-apply',function(event,obj)
+.bind('DRPick-apply',function(event,obj)
 {
 	/* This event will be triggered when user clicks on the apply button */
 	console.log(obj);
 })
-.bind('datepicker-close',function()
+.bind('DRPick-close',function()
 {
 	/* This event will be triggered before date range picker close animation */
 	console.log('before close');
 })
-.bind('datepicker-closed',function()
+.bind('DRPick-closed',function()
 {
 	/* This event will be triggered after date range picker close animation */
 	console.log('after close');
 })
-.bind('datepicker-open',function()
+.bind('DRPick-open',function()
 {
 	/* This event will be triggered before date range picker open animation */
 	console.log('before open');
 })
-.bind('datepicker-opened',function()
+.bind('DRPick-opened',function()
 {
 	/* This event will be triggered after date range picker open animation */
 	console.log('after open');
@@ -870,14 +871,14 @@ $('#dom-id')
 	<p></p>
 <pre>
 //after you called  $(dom).dateRangePicker();
-$(dom).data('dateRangePicker')
+$(dom).data('DRPick')
     //set date range, two date strings should follow the `format` in config object,
-    //set the third argument to be `true` if you don't want this method to trigger a `datepicker-change` event.
+    //set the third argument to be `true` if you don't want this method to trigger a `DRPick-change` event.
 	.setDateRange('2013-11-20','2013-11-25');
 	//set the start date to the specified date
 	.setStart('2013-11-20');
 	//set the end date to the specified date
-	//set the second argument to `true` if you don't want this method to trigger a `datepicker-change` event.
+	//set the second argument to `true` if you don't want this method to trigger a `DRPick-change` event.
 	.setEnd('2013-11-25');
 	.clear();		// clear date range
 	.close();		// close date range picker overlay

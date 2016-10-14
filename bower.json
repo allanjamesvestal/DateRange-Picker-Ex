@@ -1,6 +1,6 @@
 {
 	"name" : "jquery-date-range-picker",
-	"version" : "0.13.2-AdamWu",
+	"version" : "0.13.3-AdamWu",
 	"authors" : [
 		"<longbill.cn@gmail.com>",
 		"Zhenyu Wu <Adam_5Wu@hotmail.com>"
@@ -40,7 +40,7 @@
 		"gulpfile.js"
 	],
 	"dependencies" : {
-		"moment" : ">=2.8.1",
-		"jquery" : ">=1.4.2"
+		"jquery" : ">=1.4.2",
+		"moment" : ">=2.8.1"
 	}
 }

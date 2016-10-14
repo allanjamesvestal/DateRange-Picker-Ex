@@ -5,11 +5,6 @@
 	box-shadow: 0 0 8px #036;
 	color: inherit;
 }
-.date-picker-wrapper,
-.date-picker-wrapper *
-{
-	box-sizing: initial;
-}
 .date-picker-wrapper b
 {
 	color: #789;

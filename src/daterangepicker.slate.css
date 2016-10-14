@@ -1,29 +1,18 @@
-.date-picker,
-.date-picker
-{
-	font-size: 12px;
-	font-family: Arial,sans-serif;
-	width: 170px;
-	height: 25px;
-	padding: 0 0 0 10px;
-	border: 0;
-	line-height: 25px;
-	font-weight: 700;
-	cursor: pointer;
-	color: #303030;
+body {
 	position: relative;
-	z-index: 2;
 }
 .date-picker-wrapper
 {
+	font-size: 12px;
+	font-family: Arial,sans-serif;
 	position: absolute;
 	z-index: 1;
-	border: 1px solid #456;
-	background-color: #123;
+	border: 1px solid #bfbfbf;
+	background-color: #efefef;
 	padding: 5px 12px;
 	line-height: 20px;
-	color: inherit;
-	box-shadow: 0 0 8px rgba(160,192,255,0.5);
+	color: #aaa;
+	box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
 }
 .date-picker-wrapper,
 .date-picker-wrapper *
@@ -194,12 +183,12 @@
 	position: relative;
 	z-index: 1;
 	width: 12px;
-	background-color: red;
+	/*background-color: red;*/
 	font-size: 0;
 	line-height: 0;
 	float: left;
 	top: -5px;
-	margin: 0 8px -8px;
+	margin: 0 8px -10px;
 	visibility: hidden;
 	height: 0;
 }
@@ -269,6 +258,12 @@
 	line-height: 1.4;
 	position: relative;
 	padding: 10px 40px 10px 0;
+}
+.date-picker-wrapper .drp_top-bar div
+{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .date-picker-wrapper .drp_top-bar .error-top
 {

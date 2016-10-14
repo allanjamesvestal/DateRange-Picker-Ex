@@ -42,7 +42,7 @@ $(function () {
 		'default-range' : 'Please select a date range between %d and %d days',
 		'default-default' : 'This is costom language'
 	};
-	$('#date-range0').dateRangePicker({}).bind('datepicker-first-date-selected', function (event, obj) {
+	$('#date-range0').dateRangePicker({}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('first-date-selected', obj);
 		// obj will be something like this:
@@ -50,7 +50,7 @@ $(function () {
 		// 		date1: (Date object of the earlier date)
 		// }
 	})
-	.bind('datepicker-change', function (event, obj) {
+	.bind('DRPick-change', function (event, obj) {
 		/* This event will be triggered when second date is selected */
 		console.log('change', obj);
 		// obj will be something like this:
@@ -60,23 +60,23 @@ $(function () {
 		//	 	value: "2013-06-05 to 2013-06-07"
 		// }
 	})
-	.bind('datepicker-apply', function (event, obj) {
+	.bind('DRPick-apply', function (event, obj) {
 		/* This event will be triggered when user clicks on the apply button */
 		console.log('apply', obj);
 	})
-	.bind('datepicker-close', function () {
+	.bind('DRPick-close', function () {
 		/* This event will be triggered before date range picker close animation */
 		console.log('before close');
 	})
-	.bind('datepicker-closed', function () {
+	.bind('DRPick-closed', function () {
 		/* This event will be triggered after date range picker close animation */
 		console.log('after close');
 	})
-	.bind('datepicker-open', function () {
+	.bind('DRPick-open', function () {
 		/* This event will be triggered before date range picker open animation */
 		console.log('before open');
 	})
-	.bind('datepicker-opened', function () {
+	.bind('DRPick-opened', function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	});
@@ -102,7 +102,8 @@ $(function () {
 	});
 	$('#date-range2').dateRangePicker();
 	$('#date-range3').dateRangePicker({
-		language : 'cn'
+		language : 'cn',
+		showWeekNumbers : true
 	});
 	$('#date-range4').dateRangePicker({
 		language : 'en'
@@ -149,11 +150,12 @@ $(function () {
 				}
 			}
 		]
-	}).bind('datepicker-apply', function (event, obj) {
+	}).bind('DRPick-apply', function (event, obj) {
 		console.log(obj);
 	});
 	$('#date-range101').dateRangePicker({
 		showShortcuts : true,
+		//startOfWeek : 'monday',
 		shortcuts : {
 			'next-days' : [3, 5, 7],
 			'next' : ['week', 'month', 'year']
@@ -161,6 +163,7 @@ $(function () {
 	});
 	$('#date-range102').dateRangePicker({
 		showShortcuts : true,
+		//startOfWeek : 'monday',
 		shortcuts : {
 			'prev-days' : [3, 5, 7],
 			'prev' : ['week', 'month', 'year'],
@@ -168,14 +171,14 @@ $(function () {
 	});
 	$('#date-range103').dateRangePicker({
 		autoClose : true
-	}).bind('datepicker-first-date-selected', function (event, obj) {
+	}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('first-date-selected', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
 		// }
-	}).bind('datepicker-change', function (event, obj) {
+	}).bind('DRPick-change', function (event, obj) {
 		/* This event will be triggered when second date is selected */
 		console.log('change', obj);
 		// obj will be something like this:
@@ -185,23 +188,23 @@ $(function () {
 		//	 	value: "2013-06-05 to 2013-06-07"
 		// }
 	})
-	.bind('datepicker-apply', function (event, obj) {
+	.bind('DRPick-apply', function (event, obj) {
 		/* This event will be triggered when user clicks on the apply button */
 		console.log('apply', obj);
 	})
-	.bind('datepicker-close', function () {
+	.bind('DRPick-close', function () {
 		/* This event will be triggered before date range picker close animation */
 		console.log('before close');
 	})
-	.bind('datepicker-closed', function () {
+	.bind('DRPick-closed', function () {
 		/* This event will be triggered after date range picker close animation */
 		console.log('after close');
 	})
-	.bind('datepicker-open', function () {
+	.bind('DRPick-open', function () {
 		/* This event will be triggered before date range picker open animation */
 		console.log('before open');
 	})
-	.bind('datepicker-opened', function () {
+	.bind('DRPick-opened', function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	}); ;
@@ -248,7 +251,7 @@ $(function () {
 	});
 	$('#date-range12').dateRangePicker({
 		inline : true,
-		container : '#date-range12-container',
+		container : $('#date-range12-container'),
 		alwaysOpen : true,
 		autoClose : true
 	});
@@ -256,14 +259,14 @@ $(function () {
 		autoClose : false,
 		singleDate : true,
 		showShortcuts : false
-	}).bind('datepicker-first-date-selected', function (event, obj) {
+	}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('first-date-selected', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
 		// }
-	}).bind('datepicker-change', function (event, obj) {
+	}).bind('DRPick-change', function (event, obj) {
 		/* This event will be triggered when second date is selected */
 		console.log('change', obj);
 		// obj will be something like this:
@@ -273,23 +276,23 @@ $(function () {
 		//	 	value: "2013-06-05 to 2013-06-07"
 		// }
 	})
-	.bind('datepicker-apply', function (event, obj) {
+	.bind('DRPick-apply', function (event, obj) {
 		/* This event will be triggered when user clicks on the apply button */
 		console.log('apply', obj);
 	})
-	.bind('datepicker-close', function () {
+	.bind('DRPick-close', function () {
 		/* This event will be triggered before date range picker close animation */
 		console.log('before close');
 	})
-	.bind('datepicker-closed', function () {
+	.bind('DRPick-closed', function () {
 		/* This event will be triggered after date range picker close animation */
 		console.log('after close');
 	})
-	.bind('datepicker-open', function () {
+	.bind('DRPick-open', function () {
 		/* This event will be triggered before date range picker open animation */
 		console.log('before open');
 	})
-	.bind('datepicker-opened', function () {
+	.bind('DRPick-opened', function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	});
@@ -298,14 +301,14 @@ $(function () {
 		singleDate : true,
 		showShortcuts : false,
 		singleMonth : true
-	}).bind('datepicker-first-date-selected', function (event, obj) {
+	}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('first-date-selected', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
 		// }
-	}).bind('datepicker-change', function (event, obj) {
+	}).bind('DRPick-change', function (event, obj) {
 		/* This event will be triggered when second date is selected */
 		console.log('change', obj);
 		// obj will be something like this:
@@ -315,23 +318,23 @@ $(function () {
 		//	 	value: "2013-06-05 to 2013-06-07"
 		// }
 	})
-	.bind('datepicker-apply', function (event, obj) {
+	.bind('DRPick-apply', function (event, obj) {
 		/* This event will be triggered when user clicks on the apply button */
 		console.log('apply', obj);
 	})
-	.bind('datepicker-close', function () {
+	.bind('DRPick-close', function () {
 		/* This event will be triggered before date range picker close animation */
 		console.log('before close');
 	})
-	.bind('datepicker-closed', function () {
+	.bind('DRPick-closed', function () {
 		/* This event will be triggered after date range picker close animation */
 		console.log('after close');
 	})
-	.bind('datepicker-open', function () {
+	.bind('DRPick-open', function () {
 		/* This event will be triggered before date range picker open animation */
 		console.log('before open');
 	})
-	.bind('datepicker-opened', function () {
+	.bind('DRPick-opened', function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	});
@@ -357,36 +360,36 @@ $(function () {
 	$('#date-range16').dateRangePicker({
 		showShortcuts : false,
 		format : 'YYYY-MM-DD'
-	}).bind('datepicker-change', function (evt, obj) {
+	}).bind('DRPick-change', function (evt, obj) {
 		alert('date1: ' + obj.date1 + ' / date2: ' + obj.date2);
 	});
 	$('#date-range16-open').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('dateRangePicker').open();
+		$('#date-range16').data('DRPick').open();
 	});
 	$('#date-range16-close').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('dateRangePicker').close();
+		$('#date-range16').data('DRPick').close();
 	});
 	$('#date-range16-set').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('dateRangePicker').setDateRange('2013-11-20', '2014-08-25');
+		$('#date-range16').data('DRPick').setDateRange('2013-11-20', '2014-08-25');
 	});
 	$('#date-range16-set-silent').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('dateRangePicker').setDateRange('2014-11-03', '2015-02-12', true);
+		$('#date-range16').data('DRPick').setDateRange('2014-11-03', '2015-02-12', true);
 	});
 	$('#date-range16-clear').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('dateRangePicker').clear();
+		$('#date-range16').data('DRPick').clear();
 	});
 	$('#date-range16-destroy').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('dateRangePicker').destroy();
+		$('#date-range16').data('DRPick').destroy();
 	});
 	$('#date-range16-reset').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('dateRangePicker').resetMonthsView();
+		$('#date-range16').data('DRPick').resetMonthsView();
 	});
 	$('#date-range17').dateRangePicker({
 		stickyMonths : true,

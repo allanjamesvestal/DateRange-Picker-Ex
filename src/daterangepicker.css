@@ -1,3 +1,7 @@
+body {
+	position: relative;
+	margin: 0;
+}
 .date-picker-wrapper
 {
 	font-size: 12px;
@@ -10,6 +14,10 @@
 	line-height: 20px;
 	color: #aaa;
 	box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+}
+.date-picker-wrapper,
+.date-picker-wrapper *
+{
 	box-sizing: initial;
 }
 .date-picker-wrapper.inline-wrapper
@@ -84,13 +92,13 @@
 	line-height: 1;
 	font-size: 12px;
 	margin-bottom: 1px;
-	color: #ccc;
+	color: #CCC;
 	cursor: default;
 }
 .date-picker-wrapper .month-wrapper table div.day.lastMonth,
 .date-picker-wrapper .month-wrapper table div.day.nextMonth
 {
-	color: #999;
+	color: #DDD;
 	cursor: default;
 }
 .date-picker-wrapper .month-wrapper table .day.checked
@@ -244,6 +252,12 @@
 	line-height: 1.4;
 	position: relative;
 	padding: 10px 40px 10px 0;
+}
+.date-picker-wrapper .drp_top-bar div
+{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .date-picker-wrapper .drp_top-bar .error-top
 {
