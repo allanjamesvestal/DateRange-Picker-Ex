@@ -14,15 +14,15 @@ New features:
 - Improved interactive control experiences
 - Specializes date range entrying, leave the time entry to [TimeDropper-Ex](https://adam5wu.github.io/TimeDropper-Ex/)
 
-##[Documentation & Demo](https://adam5wu.github.io/DateRange-Picker-Ex/)
+[Documentation & Demo](https://adam5wu.github.io/DateRange-Picker-Ex/)
 
 ## License
 This project is released under MIT LICENSE
 
-### Setup for development
+## Setup for development
 * Install node.js
-** [Ubuntu/Mac](https://github.com/creationix/nvm)
-** [Windows](https://nodejs.org/en/download/)
+	* [Ubuntu/Mac](https://github.com/creationix/nvm)
+	* [Windows](https://nodejs.org/en/download/)
 * Update npm to latest version
 	```
 	npm install -g npm
