@@ -259,7 +259,7 @@ $(function () {
 		batchMode : 'week'
 	});
 	$('#date-range14-2').dateRangePicker({
-		batchMode : 'week-range'
+		batchMode : 'weekdays'
 	});
 	$('#date-range15').dateRangePicker({
 		beforeShowDay : function (t) {

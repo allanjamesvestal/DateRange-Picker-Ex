@@ -43,11 +43,15 @@
 					'next-week' : 'Week',
 					'next-month' : 'Month',
 					'next-year' : 'Year',
+					'batch-week' : 'week',
+					'batch-weekdays' : 'weekdays',
+					'batch-weekends' : 'weekends',
+					'batch-month' : 'month',
 					'less-than' : 'Date range should not be more than %d days',
 					'more-than' : 'Date range should not be less than %d days',
 					'range-start-bound' : 'Start date range out-of-bound',
 					'range-end-bound' : 'End date range out-of-bound',
-					'batch-invalid' : 'Date range does not satisfy batch constraint "%s"',
+					'batch-invalid' : 'Date range does not satisfy batch constraint (%s)',
 					'disabled-range' : 'Date range spans across disabled dates',
 					'default-more' : 'Please select a date range longer than %d days',
 					'default-single' : 'Please select a date',
@@ -152,6 +156,14 @@
 
 			// expose some api
 			state.anchor.data('DRPEx', {
+				open : function (duration) {
+					statusCheck();
+					return openDatePicker(duration)
+				},
+				close : function (duration) {
+					statusCheck();
+					return closeDatePicker(duration);
+				},
 				setStart : function (d1, silent) {
 					statusCheck(true);
 					if (d1.constructor == String)
@@ -181,17 +193,17 @@
 						applyDates(Values, silent);
 					return Values;
 				},
-				open : function (duration) {
+				clear : function (silent) {
 					statusCheck();
-					return openDatePicker(duration)
+					return clearSelection(silent);
 				},
-				close : function (duration) {
-					statusCheck();
-					return closeDatePicker(duration);
+				wrapper : function () {
+					statusCheck(true);
+					return state.wrapper;
 				},
-				clear : function () {
+				anchor : function () {
 					statusCheck();
-					return clearSelection();
+					return state.anchor;
 				},
 				redraw : function () {
 					statusCheck();
@@ -202,14 +214,6 @@
 					statusCheck();
 					if (state.wrapper)
 						resetMonthsView();
-				},
-				wrapper : function () {
-					statusCheck(true);
-					return state.wrapper;
-				},
-				anchor : function () {
-					statusCheck();
-					return state.anchor;
 				},
 				isActive : function () {
 					statusCheck();
@@ -315,7 +319,6 @@
 						return;
 					showMonth(nextMonth1, 'month1');
 					showMonth(nextMonth2, 'month2');
-					showSelectedDays();
 				}
 				state.wrapper.find('.prev').click(function () {
 					if (!opt.stickyMonths)
@@ -340,7 +343,6 @@
 						return;
 					showMonth(prevMonth2, 'month2');
 					showMonth(prevMonth1, 'month1');
-					showSelectedDays();
 				}
 				state.wrapper.delegate('.day', 'click', function (evt) {
 					dayClicked($(this));
@@ -449,12 +451,15 @@
 				return state.localizer[t] || state.fblocalizer[t] || '??';
 			}
 			function RangeReverseCheck(range) {
-				if (range.start && range.end)
+				if (range.start && range.end) {
 					if (moment(range.start).isAfter(moment(range.end))) {
 						var temp = range.end;
 						range.end = range.start;
 						range.start = temp;
+						return true;
 					}
+				}
+				return false;
 			}
 			function IsClickContained(evt, container) {
 				return container.contains(evt.target) || evt.target == container;
@@ -605,7 +610,7 @@
 
 					var vidx = 0;
 					while (vidx < vals.length) {
-						var parsed = moment(vals[vidx], opt.format, moment.locale(opt.language));
+						var parsed = moment(vals[vidx], opt.format, state.formatter.locale(), true);
 						if (!parsed.isValid())
 							break;
 						vals[vidx] = parsed.toDate();
@@ -644,38 +649,87 @@
 				var w4 = state.wrapper.find('.drp_top-bar input').outerWidth();
 				state.wrapper.find('.drp_top-bar div').width(calendarWidth - w4 - 2);
 			}
-			function clearSelection() {
+			function clearSelection(silent) {
 				if (state.selRange.start || state.selRange.end) {
 					state.selRange.start = false;
 					state.selRange.end = false;
 					state.wrapper.find('.day.checked').removeClass('checked');
 					state.wrapper.find('.day.range-end').removeClass('range-end');
 					state.wrapper.find('.day.range-start').removeClass('range-start');
+
+					updateSelectableRange();
+					showSelectedInfo(silent);
 					checkSelectionValid();
-					showSelectedInfo();
-					showSelectedDays();
-					state.anchor.trigger('DRPEx-change', {});
 					return true;
 				}
 				return false;
 			}
-			function handleStart(time) {
-				var r = time;
-				if (opt.batchMode === 'week-range') {
-					r = moment(time).day(opt.startOfWeek ? 1 : 0).valueOf();
-				} else if (opt.batchMode === 'month-range') {
-					r = moment(time).startOf('month').valueOf();
-				}
-				return r;
+			function clearHovering() {
+				state.wrapper.find('.day.hovering').removeClass('hovering');
+				state.wrapper.find('.date-range-length-tip').hide();
 			}
-			function handleEnd(time) {
-				var r = time;
-				if (opt.batchMode === 'week-range') {
-					r = moment(time).day(opt.startOfWeek ? 7 : 6).valueOf();
-				} else if (opt.batchMode === 'month-range') {
-					r = moment(time).endOf('month').startOf('day').valueOf();
+			function dayHovering(day) {
+				if (state.selWeek)
+					return;
+				var tooltip = (day.hasClass('has-tooltip') && day.attr('data-tooltip')) ? tagGen('span', {
+					style : 'white-space:nowrap'
+				}, day.attr('data-tooltip')) : '';
+
+				if (day.hasClass('valid') && !day.hasClass('unselectable')) {
+					if (opt.singleDate) {
+						state.wrapper.find('.day.hovering').removeClass('hovering');
+						day.addClass('hovering');
+					} else {
+						if (state.selRange.start && !state.selRange.end) {
+							state.wrapper.find('.day').each(function () {
+								var time = parseInt($(this).attr('SOD-time'));
+								if (time == hoverTime) {
+									$(this).addClass('hovering');
+								} else {
+									$(this).removeClass('hovering');
+								}
+								if ((state.selRange.start < time && hoverTime >= time) ||
+									(state.selRange.start > time && hoverTime <= time)) {
+									$(this).addClass('hovering');
+								} else {
+									$(this).removeClass('hovering');
+								}
+							});
+							var days = countDays(hoverTime, state.selRange.start);
+							if (opt.hoveringTooltip) {
+								if (typeof opt.hoveringTooltip == 'function') {
+									tooltip = opt.hoveringTooltip(days, state.selRange.start, hoverTime);
+								} else if (opt.hoveringTooltip === true && days > 1) {
+									tooltip = days + ' ' + localize('days');
+								}
+							}
+						}
+					}
 				}
-				return r;
+
+				if (tooltip) {
+					var posDay = day.offset();
+					var posBox = state.wrapper.offset();
+					var _left = posDay.left - posBox.left;
+					var _top = posDay.top - posBox.top;
+					_left += day.width() / 2;
+					var $tip = state.wrapper.find('.date-range-length-tip');
+					var w = $tip.css({
+							'visibility' : 'hidden',
+							'display' : 'none'
+						}).html(tooltip).width();
+					var h = $tip.height();
+					_left -= w / 2;
+					_top -= h;
+					$tip.css({
+						left : _left,
+						top : _top,
+						display : 'block',
+						'visibility' : 'visible'
+					});
+				} else {
+					state.wrapper.find('.date-range-length-tip').hide();
+				}
 			}
 			function dayClicked(day) {
 				if (state.selWeek)
@@ -687,45 +741,46 @@
 				if (opt.singleDate) {
 					state.selRange.start = time;
 					state.selRange.end = time;
-				} else if (opt.batchMode === 'week') {
-					state.selRange.start = moment(time).day(opt.startOfWeek ? 1 : 0).valueOf();
-					state.selRange.end = moment(time).day(opt.startOfWeek ? 7 : 6).valueOf();
-				} else if (opt.batchMode === 'weekdays') {
-					state.selRange.start = moment(time).day(1).valueOf();
-					state.selRange.end = moment(time).day(5).valueOf();
-				} else if (opt.batchMode === 'weekends') {
-					state.selRange.start = moment(time).day(6).valueOf();
-					state.selRange.end = moment(time).day(7).valueOf();
-				} else if (opt.batchMode === 'month') {
-					state.selRange.start = moment(time).startOf('month').valueOf();
-					state.selRange.end = moment(time).endOf('month').startOf('day').valueOf();
-				} else if ((state.selRange.start && state.selRange.end) ||
-					(!state.selRange.start && !state.selRange.end)) {
-					state.selRange.start = handleStart(time);
-					state.selRange.end = false;
-				} else if (state.selRange.start) {
-					state.selRange.end = handleEnd(time);
-				}
-				//In case the start is after the end, swap the timestamps
-				RangeReverseCheck(state.selRange);
+				} else {
+					//In case the start is after the end, swap the timestamps
+					RangeReverseCheck(state.selRange);
 
-				clearHovering();
-				if (state.selRange.start && !state.selRange.end) {
-					var dateRange = getDateString(state.selRange.start);
-					state.anchor.trigger('DRPEx-first-date', {
-						'value' : dateRange,
-						'date1' : new Date(state.selRange.start)
-					});
-					dayHovering(day);
-					state.wrapper.find('.week-number').removeClass('week-ranged');
+					if (opt.batchMode === 'week') {
+						state.selRange.start = moment(time).day(opt.startOfWeek ? 1 : 0).valueOf();
+						state.selRange.end = moment(time).day(opt.startOfWeek ? 7 : 6).valueOf();
+					} else if (opt.batchMode === 'weekdays') {
+						state.selRange.start = moment(time).day(1).valueOf();
+						state.selRange.end = moment(time).day(5).valueOf();
+					} else if (opt.batchMode === 'weekends') {
+						state.selRange.start = moment(time).day(6).valueOf();
+						state.selRange.end = moment(time).day(7).valueOf();
+					} else if (opt.batchMode === 'month') {
+						state.selRange.start = moment(time).startOf('month').valueOf();
+						state.selRange.end = moment(time).endOf('month').startOf('day').valueOf();
+					} else if ((state.selRange.start && state.selRange.end) ||
+						(!state.selRange.start && !state.selRange.end)) {
+						state.selRange.start = time;
+						state.selRange.end = false;
+					} else if (state.selRange.start) {
+						state.selRange.end = time;
+					}
+
+					clearHovering();
+					if (!state.selRange.end) {
+						var dateRange = getDateString(state.selRange.start);
+						state.anchor.trigger('DRPEx-first-date', {
+							'value' : dateRange,
+							'date1' : new Date(state.selRange.start)
+						});
+						dayHovering(day);
+						state.wrapper.find('.week-number').removeClass('week-ranged');
+					}
 				}
-				updateSelectableRange(time);
-				if (state.selWeek)
-					state.selWeek = false;
-				checkSelectionValid();
+
+				updateSelectableRange();
 				showSelectedInfo();
 				showSelectedDays();
-				autoclose();
+				autoClose();
 			}
 			function weekSelectionHovering(startTime, endTime) {
 				state.wrapper.find('.day').each(function () {
@@ -768,8 +823,8 @@
 					week.addClass('week-ranged');
 
 					updateSelectableRange();
-					checkSelectionValid();
 					showSelectedInfo();
+					checkSelectionValid();
 				} else {
 					clearHovering();
 					var date1 = new Date(thisTime < state.selWeek ? thisTime : state.selWeek);
@@ -778,10 +833,10 @@
 					state.selRange.start = moment(date1).day(opt.startOfWeek ? 1 : 0).valueOf();
 					state.selRange.end = moment(date2).day(opt.startOfWeek ? 7 : 6).valueOf();
 
-					checkSelectionValid();
+					updateSelectableRange();
 					showSelectedInfo();
 					showSelectedDays();
-					autoclose();
+					autoClose();
 				}
 			}
 			function weekNumberHovering(week) {
@@ -864,78 +919,11 @@
 				}
 				return true;
 			}
-			function dayHovering(day) {
-				if (state.selWeek)
-					return;
-				var hoverTime = parseInt(day.attr('SOD-time'));
-				var tooltip = '';
-				if (day.hasClass('has-tooltip') && day.attr('data-tooltip')) {
-					tooltip = '<span style="white-space:nowrap">' + day.attr('data-tooltip') + '</span>';
-				} else if (day.hasClass('valid') && !day.hasClass('unselectable')) {
-					if (opt.singleDate) {
-						state.wrapper.find('.day.hovering').removeClass('hovering');
-						day.addClass('hovering');
-					} else {
-						state.wrapper.find('.day').each(function () {
-							var time = parseInt($(this).attr('SOD-time'));
-							if (time == hoverTime) {
-								$(this).addClass('hovering');
-							} else {
-								$(this).removeClass('hovering');
-							}
-							if ((state.selRange.start && !state.selRange.end) &&
-								((state.selRange.start < time && hoverTime >= time) ||
-									(state.selRange.start > time && hoverTime <= time))) {
-								$(this).addClass('hovering');
-							} else {
-								$(this).removeClass('hovering');
-							}
-						});
-						if (state.selRange.start && !state.selRange.end) {
-							var days = countDays(hoverTime, state.selRange.start);
-							if (opt.hoveringTooltip) {
-								if (typeof opt.hoveringTooltip == 'function') {
-									tooltip = opt.hoveringTooltip(days, state.selRange.start, hoverTime);
-								} else if (opt.hoveringTooltip === true && days > 1) {
-									tooltip = days + ' ' + localize('days');
-								}
-							}
-						}
-					}
-				}
-				if (tooltip) {
-					var posDay = day.offset();
-					var posBox = state.wrapper.offset();
-					var _left = posDay.left - posBox.left;
-					var _top = posDay.top - posBox.top;
-					_left += day.width() / 2;
-					var $tip = state.wrapper.find('.date-range-length-tip');
-					var w = $tip.css({
-							'visibility' : 'hidden',
-							'display' : 'none'
-						}).html(tooltip).width();
-					var h = $tip.height();
-					_left -= w / 2;
-					_top -= h;
-					$tip.css({
-						left : _left,
-						top : _top,
-						display : 'block',
-						'visibility' : 'visible'
-					});
-				} else {
-					state.wrapper.find('.date-range-length-tip').hide();
-				}
-			}
-			function clearHovering() {
-				state.wrapper.find('.day.hovering').removeClass('hovering');
-				state.wrapper.find('.date-range-length-tip').hide();
-			}
 			function applyAndClose() {
-				if (state.selRange.start && state.selRange.end) {
-					var dateRangeStr,
-					startDateStr,
-					endDateStr;
+				if (checkSelectionValid()) {
+					var dateRangeStr;
+					var startDateStr;
+					var endDateStr;
 					if (opt.singleDate) {
 						dateRangeStr = getDateString(state.selRange.start)
 							state.anchor.trigger('DRPEx-apply', {
@@ -956,9 +944,9 @@
 				}
 				closeDatePicker(opt.animationTime);
 			}
-			function autoclose() {
-				if (opt.autoClose && state.selRange.start) {
-					if (opt.singleDate || state.selRange.end)
+			function autoClose() {
+				if (checkSelectionValid()) {
+					if (opt.autoClose)
 						applyAndClose();
 				}
 			}
@@ -1016,21 +1004,11 @@
 							!mEnd.isSame(mStart.clone().endOf('month').startOf('day')))
 							valid = false;
 						break;
-					case 'week-range':
-						if (!mStart.isSame(mStart.clone().day(opt.startOfWeek ? 1 : 0)) ||
-							!mEnd.isSame(mEnd.clone().day(opt.startOfWeek ? 7 : 6)))
-							valid = false;
-						break;
-					case 'month-range':
-						if (!mStart.isSame(mStart.clone().startOf('month')) ||
-							!mEnd.isSame(mEnd.clone().endOf('month').startOf('day')))
-							valid = false;
-						break;
 					default:
 						throw new Error('Unrecognized batch mode - ' + opt.batchMode);
 					}
 					if (!valid) {
-						var msg = localize('batch-invalid').replace('%s', opt.batchMode);
+						var msg = localize('batch-invalid').replace('%s', localize('batch-' + opt.batchMode));
 						state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
 					}
 				}
@@ -1081,6 +1059,10 @@
 							'date2' : new Date(state.selRange.end)
 						});
 					}
+				} else if (!state.selRange.start) {
+					if (!silent) {
+						state.anchor.trigger('DRPEx-change', {});
+					}
 				}
 
 				var normalmsg = state.wrapper.find('.drp_top-bar .normal-top');
@@ -1092,7 +1074,8 @@
 					end : date2
 				};
 				RangeReverseCheck(range);
-				if (state.selRange.start != range.start.getTime() || state.selRange.end != range.end.getTime()) {
+				if (state.selRange.start != range.start.getTime() ||
+					state.selRange.end != range.end.getTime()) {
 					state.selRange.start = range.start.getTime();
 					state.selRange.end = range.end.getTime();
 					if (opt.stickyMonths || (compareDay(range.start, range.end) > 0 &&
@@ -1121,12 +1104,13 @@
 					showMonth(range.end, 'month2');
 					showGap();
 
-					checkSelectionValid();
 					showSelectedInfo(silent);
-					showSelectedDays();
+					if (silent) {
+						checkSelectionValid();
+					} else {
+						autoClose();
+					}
 				}
-				if (!silent)
-					autoclose();
 			}
 			function showSelectedDays() {
 				if (!state.selRange.start && !state.selRange.end)
@@ -1175,7 +1159,9 @@
 				state.wrapper.find('.' + month + ' .month-name').html(nameMonth(date));
 				state.wrapper.find('.' + month + ' tbody').html(createMonthHTML(date));
 				state[month] = date;
+
 				updateSelectableRange();
+				showSelectedDays();
 			}
 			function nameMonth(d) {
 				state.formatter.toDate().setTime(d);
@@ -1225,7 +1211,6 @@
 				showMonth(startTS, 'month1');
 				showMonth(endTS, 'month2');
 				showGap();
-				showSelectedDays();
 			}
 
 			function compareMonth(m1, m2) {

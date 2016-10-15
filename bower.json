@@ -1,6 +1,6 @@
 {
 	"name" : "daterange-picker-ex",
-	"version" : "1.1.1",
+	"version" : "1.1.2",
 	"authors" : [
 		"Chunlong <longbill.cn@gmail.com>",
 		"Zhenyu Wu <Adam_5Wu@hotmail.com>"
@@ -38,6 +38,6 @@
 	],
 	"dependencies" : {
 		"jquery" : ">=1.4.2",
-		"moment" : ">=2.8.1"
+		"moment" : ">=2.9.0"
 	}
 }

@@ -10,7 +10,7 @@
 		<link rel="stylesheet" type="text/css" href="src/daterangepicker.css" />
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment-with-locales.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
 		<script type="text/javascript" src="src/jquery.daterangepicker.js"></script>
 		<script type="text/javascript" src="src/jquery.daterangepicker.lang.js"></script>
 		<style type="text/css">
@@ -49,7 +49,7 @@
 			<p>
 				Requires
 				<a href="http://jquery.com/" target=_blank>jQuery</a> 1.4.2+ (MIT LICENSE),
-				<a href="http://momentjs.com/" target=_blank>MomentJS</a> 2.8.1+ (MIT LICENSE)
+				<a href="http://momentjs.com/" target=_blank>MomentJS</a> 2.9.0+ (MIT LICENSE)
 			</p>
 			<p>
 				Compatible Browsers:
@@ -311,11 +311,11 @@
 </pre>
 			</div>
     <div class="demo">
-				Batch mode (week-range): <input id="date-range14-2" size="60" value="">
+				Batch mode (weekdays): <input id="date-range14-2" size="60" value="">
 				<a href="#" class="show-option">Show Config</a>
 <pre class="options">
 {
-	batchMode : 'week-range'
+	batchMode : 'weekdays'
 }				
 </pre>
     </div>
@@ -666,7 +666,7 @@ $('#date-range16-reset').click(function(evt)
 	only one month instead of two months.</i>
 <b>batchMode (false or string)</b>
 	<i> auto batch select mode </i>
-	<i> false (default), week, weekdays, weekends, month, week-range, month-range</i>
+	<i> false (default), week, weekdays, weekends, month</i>
 <b>beforeShowDay (Function)</b>
 	<i>A function that takes a date as a parameter and must return an array with:
 	[0]: true/false indicating whether or not this date is selectable
