@@ -29,10 +29,6 @@ body {
 {
 	width: auto;
 }
-.date-picker-wrapper.no-shortcuts
-{
-	padding-bottom: 12px;
-}
 .date-picker-wrapper.no-topbar
 {
 	padding-top: 12px;
@@ -83,7 +79,11 @@ body {
 	margin: 0;
 	padding: 0;
 }
-.date-picker-wrapper .month-wrapper table div:hover
+.date-picker-wrapper .month-wrapper table th.button
+{
+	width: 27px;
+}
+.date-picker-wrapper .month-wrapper table tbody div:hover
 {
 	background: #345;
 }
@@ -413,4 +413,24 @@ body {
 	color: #49E;
 	background: #456;
 	font-weight: bold;
+}
+.date-picker-wrapper div.shortcuts {
+	white-space: nowrap;
+	overflow: hidden;
+}
+.date-picker-wrapper div.shortcuts.none
+{
+	opacity: 0;
+	height: 6px;
+}
+.date-picker-wrapper div.shortcuts span {
+	margin-left: 0.25em;
+}
+.date-picker-wrapper div.shortcuts span.shortcut {
+	color: #48C;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.date-picker-wrapper div.shortcuts span.shortcut:hover {
+	color: #C8F;
 }

@@ -1,23 +1,24 @@
 {
-	"name" : "jquery-date-range-picker",
-	"version" : "0.13.3-AdamWu",
+	"name" : "daterange-picker-ex",
+	"version" : "1.0.0",
 	"authors" : [
-		"<longbill.cn@gmail.com>",
+		"Chunlong <longbill.cn@gmail.com>",
 		"Zhenyu Wu <Adam_5Wu@hotmail.com>"
 	],
-	"homepage" : "https://adam5wu.github.io/jquery-date-range-picker/",
-	"description" : "jQuery Date Range Picker is a jQuery plugin that allows user to select a date range.",
+	"homepage" : "https://adam5wu.github.io/DateRange-Picker-Ex/",
+	"description" : "DateRangePicker-Ex is a jQuery plugin that allows user to select a date or date range.",
 	"keywords" : [
 		"jquery",
 		"date",
 		"daterange",
-		"date",
-		"picker",
-		"range"
+		"datepicker",
+		"rangepicker",
+		"daterangepicker"
 	],
 	"main" : [
 		"./src/jquery.daterangepicker.js",
 		"./src/daterangepicker.css",
+		"./src/daterangepicker.slate.css",
 		"./src/daterangepicker.slate.delta.css"
 	],
 	"moduleType" : [
@@ -27,16 +28,11 @@
 	"license" : "MIT",
 	"repository" : {
 		"type" : "git",
-		"url" : "git://github.com/Adam5Wu/jquery-date-range-picker.git"
+		"url" : "git://github.com/Adam5Wu/DateRange-Picker-Ex.git"
 	},
 	"ignore" : [
-		"**/.*",
 		"node_modules",
 		"bower_components",
-		"test",
-		"tests",
-		"preview.jpg",
-		"CHANGELOG.md",
 		"gulpfile.js"
 	],
 	"dependencies" : {

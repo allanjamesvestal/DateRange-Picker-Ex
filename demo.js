@@ -10,38 +10,6 @@ $(function () {
 	$('#remove-slate').click(function () {
 		$('link[rel=stylesheet][href*="slate"]').remove();
 	});
-	/*
-	define a new language named "custom"
-	 */
-	$.dateRangePickerLanguages['custom'] = {
-		'selected' : 'Choosed:',
-		'days' : 'Days',
-		'apply' : 'Close',
-		'week-1' : 'Mon',
-		'week-2' : 'Tue',
-		'week-3' : 'Wed',
-		'week-4' : 'Thu',
-		'week-5' : 'Fri',
-		'week-6' : 'Sat',
-		'week-7' : 'Sun',
-		'month-name' : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-		'shortcuts' : 'Shortcuts',
-		'past' : 'Past',
-		'7days' : '7days',
-		'14days' : '14days',
-		'30days' : '30days',
-		'previous' : 'Previous',
-		'prev-week' : 'Week',
-		'prev-month' : 'Month',
-		'prev-quarter' : 'Quarter',
-		'prev-year' : 'Year',
-		'less-than' : 'Date range should longer than %d days',
-		'more-than' : 'Date range should less than %d days',
-		'default-more' : 'Please select a date range longer than %d days',
-		'default-less' : 'Please select a date range less than %d days',
-		'default-range' : 'Please select a date range between %d and %d days',
-		'default-default' : 'This is costom language'
-	};
 	$('#date-range0').dateRangePicker({}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('first-date-selected', obj);
@@ -88,53 +56,25 @@ $(function () {
 	$('#date-range4').dateRangePicker({
 		language : 'en'
 	});
-	$('#date-range105').dateRangePicker({
-		showCustomValues : true,
-		customValueLabel : 'Dynamic Ranges',
-		customValues :
-		[{
-				name : 'MTD',
-				value : 'Month To Date'
-			}, {
-				name : 'YTD',
-				value : 'Year To Date'
-			}
-		]
-	})
 	$('#date-range100').dateRangePicker({
-		shortcuts : null,
-		startOfWeek : 'sunday',
-		language : 'en',
-		showShortcuts : true,
-		customShortcuts :
-		[
-			//if return an array of two dates, it will select the date range between the two dates
-			{
-				name : 'this week',
-				dates : function () {
-					var start = moment().day(0).toDate();
-					var end = moment().day(6).toDate();
-					// start.setDate(1);
-					// end.setDate(30);
+		shortcuts : {
+			custom : {
+				'this week' : function (daytime) {
+					var start = daytime.day(0).toDate();
+					var end = daytime.clone().day(6).toDate();
 					return [start, end];
-				}
-			},
-			//if only return an array of one date, it will display the month which containing the date.
-			//will not select any date range
-			{
-				name : 'Oct 2014',
-				dates : function () {
+				},
+				'Oct 2014' : function (daytime) {
 					//move calendars to show this date's month and next month
 					var movetodate = moment('2014-10', 'YYYY-MM').toDate();
 					return [movetodate];
 				}
 			}
-		]
+		}
 	}).bind('DRPick-apply', function (event, obj) {
 		console.log(obj);
 	});
 	$('#date-range101').dateRangePicker({
-		showShortcuts : true,
 		//startOfWeek : 'monday',
 		shortcuts : {
 			'next-days' : [3, 5, 7],
@@ -142,11 +82,10 @@ $(function () {
 		}
 	});
 	$('#date-range102').dateRangePicker({
-		showShortcuts : true,
 		//startOfWeek : 'monday',
 		shortcuts : {
 			'prev-days' : [3, 5, 7],
-			'prev' : ['week', 'month', 'year'],
+			'prev' : ['week', 'month', 'year']
 		}
 	});
 	$('#date-range103').dateRangePicker({
@@ -188,15 +127,16 @@ $(function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	}); ;
-	$('#date-range4-1').dateRangePicker({
-		language : 'custom'
-	});
 	$('#date-range5').dateRangePicker({
-		startDate : '2014-11-20'
+		dateRange : {
+			start : '2014-11-20'
+		}
 	});
 	$('#date-range6').dateRangePicker({
-		startDate : '2013-01-10',
-		endDate : '2013-02-10'
+		dateRange : {
+			start : '2013-01-10',
+			end : '2013-03-10'
+		}
 	});
 	$('#date-range7').dateRangePicker({
 		minDays : 3,
@@ -236,9 +176,7 @@ $(function () {
 		autoClose : true
 	});
 	$('#date-range13').dateRangePicker({
-		autoClose : false,
-		singleDate : true,
-		showShortcuts : false
+		singleDate : true
 	}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('first-date-selected', obj);
@@ -279,7 +217,6 @@ $(function () {
 	$('#date-range13-2').dateRangePicker({
 		autoClose : true,
 		singleDate : true,
-		showShortcuts : false,
 		singleMonth : true
 	}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
@@ -319,15 +256,12 @@ $(function () {
 		console.log('after open');
 	});
 	$('#date-range14').dateRangePicker({
-		batchMode : 'week',
-		showShortcuts : false
+		batchMode : 'week'
 	});
 	$('#date-range14-2').dateRangePicker({
-		batchMode : 'week-range',
-		showShortcuts : false
+		batchMode : 'week-range'
 	});
 	$('#date-range15').dateRangePicker({
-		showShortcuts : false,
 		beforeShowDay : function (t) {
 			var valid = !(t.getDay() == 0 || t.getDay() == 6); //disable saturday and sunday
 			var _class = '';
@@ -338,7 +272,6 @@ $(function () {
 		}
 	});
 	$('#date-range16').dateRangePicker({
-		showShortcuts : false,
 		format : 'YYYY-MM-DD'
 	}).bind('DRPick-change', function (evt, obj) {
 		alert('date1: ' + obj.date1 + ' / date2: ' + obj.date2);
@@ -373,14 +306,13 @@ $(function () {
 	});
 	$('#date-range17').dateRangePicker({
 		stickyMonths : true,
-		startDate : '2013-01-10',
-		endDate : '2013-05-10'
+		dateRange : {
+			start : '2013-01-10',
+			end : '2013-05-10'
+		}
 	});
 	$('#date-range18').dateRangePicker({
 		customTopBar : 'Foo Bar'
-	});
-	$('#date-range19').dateRangePicker({
-		extraClass : 'date-range-picker19'
 	});
 	$('#date-range20').dateRangePicker({
 		hoveringTooltip : false
@@ -401,7 +333,6 @@ $(function () {
 	});
 	$('#date-range23').dateRangePicker({
 		singleMonth : true,
-		showShortcuts : false,
 		showTopbar : false
 	});
 	$('#date-range24').dateRangePicker({
@@ -426,7 +357,9 @@ $(function () {
 		selectBackward : true
 	});
 	$('#hotel-booking').dateRangePicker({
-		startDate : new Date(),
+		dateRange : {
+			start : new Date()
+		},
 		selectForward : true,
 		beforeShowDay : function (t) {
 			var valid = !(t.getDay() == 0 || t.getDay() == 6); //disable saturday and sunday

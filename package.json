@@ -1,23 +1,24 @@
 {
-	"name" : "jquery-date-range-picker",
-	"description" : "jQuery Date Range Picker is a jQuery plugin that allows user to select a date range.",
-	"version" : "0.13.3-AdamWu",
+	"name" : "daterange-picker-ex",
+	"description" : "DateRangePicker-Ex is a jQuery plugin that allows user to select a date range.",
+	"version" : "1.0.0",
 	"license" : "MIT",
 	"keywords" : [
 		"jquery",
 		"date",
-		"picker",
 		"daterange",
-		"datepicker"
+		"datepicker",
+		"rangepicker",
+		"daterangepicker"
 	],
 	"repository" : {
 		"type" : "git",
-		"url" : "git://github.com/Adam5Wu/TimeDropper-Ex.git"
+		"url" : "git://github.com/Adam5Wu/DateRange-Picker-Ex.git"
 	},
 	"bugs" : {
-		"url" : "https://github.com/Adam5Wu/jquery-date-range-picker/issues"
+		"url" : "https://github.com/Adam5Wu/DateRange-Picker-Ex/issues"
 	},
-	"homepage" : "https://adam5wu.github.io/jquery-date-range-picker/",
+	"homepage" : "https://adam5wu.github.io/DateRange-Picker-Ex/",
 	"maintainers" : [
 		"Zhenyu Wu <Adam_5Wu@hotmail.com>"
 	],
@@ -28,7 +29,7 @@
 		"node" : "0.12.x",
 		"npm" : "~3.9.2"
 	},
-	"author" : "longbill",
+	"author" : "Chunlong <longbill.cn@gmail.com>",
 	"contributors" : [
 		"Zhenyu Wu <Adam_5Wu@hotmail.com>"
 	],
