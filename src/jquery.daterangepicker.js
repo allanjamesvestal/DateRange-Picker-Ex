@@ -62,7 +62,7 @@
 					autoClose : false,
 					format : 'YYYY-MM-DD',
 					separator : ' to ',
-					language : 'auto',
+					language : undefined,
 					startOfWeek : undefined,
 					getValue : function () {
 						return $(this).val();
@@ -233,7 +233,7 @@
 				state.fblocalizer = ResolveLocalizer(state.locale);
 
 				var locale = state.locale;
-				if (opt.language == 'auto') {
+				if (!opt.language) {
 					var languages = navigator.languages || navigator.userLanguage ||
 						(navigator.language ? [navigator.language] : [navigator.browserLanguage]);
 					for (var lang in languages) {
