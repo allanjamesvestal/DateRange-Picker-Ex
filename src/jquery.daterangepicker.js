@@ -679,29 +679,28 @@
 					if (opt.singleDate) {
 						state.wrapper.find('.day.hovering').removeClass('hovering');
 						day.addClass('hovering');
-					} else {
-						if (state.selRange.start && !state.selRange.end) {
-							state.wrapper.find('.day').each(function () {
-								var time = parseInt($(this).attr('SOD-time'));
-								if (time == hoverTime) {
-									$(this).addClass('hovering');
-								} else {
-									$(this).removeClass('hovering');
-								}
-								if ((state.selRange.start < time && hoverTime >= time) ||
-									(state.selRange.start > time && hoverTime <= time)) {
-									$(this).addClass('hovering');
-								} else {
-									$(this).removeClass('hovering');
-								}
-							});
-							var days = countDays(hoverTime, state.selRange.start);
-							if (opt.hoveringTooltip) {
-								if (typeof opt.hoveringTooltip == 'function') {
-									tooltip = opt.hoveringTooltip(days, state.selRange.start, hoverTime);
-								} else if (opt.hoveringTooltip === true && days > 1) {
-									tooltip = days + ' ' + localize('days');
-								}
+					} else if (state.selRange.start && !state.selRange.end) {
+						var hoverTime = parseInt(day.attr('SOD-time'));
+						state.wrapper.find('.day').each(function () {
+							var time = parseInt($(this).attr('SOD-time'));
+							if (time == hoverTime) {
+								$(this).addClass('hovering');
+							} else {
+								$(this).removeClass('hovering');
+							}
+							if ((state.selRange.start < time && hoverTime >= time) ||
+								(state.selRange.start > time && hoverTime <= time)) {
+								$(this).addClass('hovering');
+							} else {
+								$(this).removeClass('hovering');
+							}
+						});
+						var days = countDays(hoverTime, state.selRange.start);
+						if (opt.hoveringTooltip) {
+							if (typeof opt.hoveringTooltip == 'function') {
+								tooltip = opt.hoveringTooltip(days, state.selRange.start, hoverTime);
+							} else if (opt.hoveringTooltip === true && days > 1) {
+								tooltip = days + ' ' + localize('days');
 							}
 						}
 					}
@@ -742,9 +741,6 @@
 					state.selRange.start = time;
 					state.selRange.end = time;
 				} else {
-					//In case the start is after the end, swap the timestamps
-					RangeReverseCheck(state.selRange);
-
 					if (opt.batchMode === 'week') {
 						state.selRange.start = moment(time).day(opt.startOfWeek ? 1 : 0).valueOf();
 						state.selRange.end = moment(time).day(opt.startOfWeek ? 7 : 6).valueOf();
@@ -764,6 +760,8 @@
 					} else if (state.selRange.start) {
 						state.selRange.end = time;
 					}
+					//In case the start is after the end, swap the timestamps
+					RangeReverseCheck(state.selRange);
 
 					clearHovering();
 					if (!state.selRange.end) {
@@ -821,10 +819,6 @@
 					weekSelectionHovering(state.selRange.start, endTime);
 					state.wrapper.find('.week-ranged').removeClass('week-ranged');
 					week.addClass('week-ranged');
-
-					updateSelectableRange();
-					showSelectedInfo();
-					checkSelectionValid();
 				} else {
 					clearHovering();
 					var date1 = new Date(thisTime < state.selWeek ? thisTime : state.selWeek);
@@ -832,12 +826,12 @@
 					state.selWeek = false;
 					state.selRange.start = moment(date1).day(opt.startOfWeek ? 1 : 0).valueOf();
 					state.selRange.end = moment(date2).day(opt.startOfWeek ? 7 : 6).valueOf();
-
-					updateSelectableRange();
-					showSelectedInfo();
-					showSelectedDays();
-					autoClose();
 				}
+
+				updateSelectableRange();
+				showSelectedInfo();
+				showSelectedDays();
+				autoClose();
 			}
 			function weekNumberHovering(week) {
 				if (!state.selWeek)
@@ -857,10 +851,10 @@
 					weekSelectionHovering(startTime, endTime);
 				}
 			}
-			function isValidTime(time) {
+			function isValidTime(time, hovering) {
 				if (isDateOutOfBounds(time))
 					return false;
-				if (!opt.singleDate) {
+				if (!opt.singleDate && hovering) {
 					//check maxDays and minDays setting
 					if ((opt.maxDays > 0 && countDays(time, state.selRange.start) > opt.maxDays) ||
 						(opt.minDays > 0 && countDays(time, state.selRange.start) < opt.minDays))
@@ -889,14 +883,14 @@
 					if (!state.selRange.end) {
 						state.wrapper.find('.day.toMonth.valid').each(function () {
 							var time = parseInt($(this).attr('SOD-time'));
-							if (!isValidTime(time))
+							if (!isValidTime(time, true))
 								$(this).addClass('unselectable');
 						});
 						state.wrapper.find('.week-number.valid').each(function () {
 							var time = parseInt($(this).attr('SOW-time'));
 							if (time >= state.selRange.start)
 								time = moment(time).day(opt.startOfWeek ? 7 : 6).toDate();
-							if (!isValidTime(time))
+							if (!isValidTime(time, true))
 								$(this).addClass('unselectable');
 						});
 					} else {
@@ -1195,7 +1189,7 @@
 			}
 			function resetMonthsView() {
 				var startTS = state.selRange.start;
-				var endTS = state.selRange.end;
+				var endTS = state.selRange.end || startTS;
 				if (!startTS) {
 					startTS = getDefaultTime();
 					endTS = nextMonth(startTS);
