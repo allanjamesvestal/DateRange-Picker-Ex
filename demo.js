@@ -10,7 +10,7 @@ $(function () {
 	$('#remove-slate').click(function () {
 		$('link[rel=stylesheet][href*="slate"]').remove();
 	});
-	$('#date-range0').dateRangePicker({}).bind('DRPick-first-date', function (event, obj) {
+	$('#date-range0').dateRangePicker({}).bind('DRPEx-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('range-start', obj);
 		// obj will be something like this:
@@ -18,7 +18,7 @@ $(function () {
 		// 		date1: (Date object of the earlier date)
 		// }
 	})
-	.bind('DRPick-change', function (event, obj) {
+	.bind('DRPEx-change', function (event, obj) {
 		/* This event will be triggered when second date is selected */
 		console.log('change', obj);
 		// obj will be something like this:
@@ -28,23 +28,23 @@ $(function () {
 		//	 	value: "2013-06-05 to 2013-06-07"
 		// }
 	})
-	.bind('DRPick-apply', function (event, obj) {
+	.bind('DRPEx-apply', function (event, obj) {
 		/* This event will be triggered when user clicks on the apply button */
 		console.log('apply', obj);
 	})
-	.bind('DRPick-close', function () {
+	.bind('DRPEx-close', function () {
 		/* This event will be triggered before date range picker close animation */
 		console.log('before close');
 	})
-	.bind('DRPick-closed', function () {
+	.bind('DRPEx-closed', function () {
 		/* This event will be triggered after date range picker close animation */
 		console.log('after close');
 	})
-	.bind('DRPick-open', function () {
+	.bind('DRPEx-open', function () {
 		/* This event will be triggered before date range picker open animation */
 		console.log('before open');
 	})
-	.bind('DRPick-opened', function () {
+	.bind('DRPEx-opened', function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	});
@@ -71,7 +71,7 @@ $(function () {
 				}
 			}
 		}
-	}).bind('DRPick-apply', function (event, obj) {
+	}).bind('DRPEx-apply', function (event, obj) {
 		console.log(obj);
 	});
 	$('#date-range101').dateRangePicker({
@@ -90,14 +90,14 @@ $(function () {
 	});
 	$('#date-range103').dateRangePicker({
 		autoClose : true
-	}).bind('DRPick-first-date', function (event, obj) {
+	}).bind('DRPEx-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('range-start', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
 		// }
-	}).bind('DRPick-change', function (event, obj) {
+	}).bind('DRPEx-change', function (event, obj) {
 		/* This event will be triggered when second date is selected */
 		console.log('change', obj);
 		// obj will be something like this:
@@ -107,23 +107,23 @@ $(function () {
 		//	 	value: "2013-06-05 to 2013-06-07"
 		// }
 	})
-	.bind('DRPick-apply', function (event, obj) {
+	.bind('DRPEx-apply', function (event, obj) {
 		/* This event will be triggered when user clicks on the apply button */
 		console.log('apply', obj);
 	})
-	.bind('DRPick-close', function () {
+	.bind('DRPEx-close', function () {
 		/* This event will be triggered before date range picker close animation */
 		console.log('before close');
 	})
-	.bind('DRPick-closed', function () {
+	.bind('DRPEx-closed', function () {
 		/* This event will be triggered after date range picker close animation */
 		console.log('after close');
 	})
-	.bind('DRPick-open', function () {
+	.bind('DRPEx-open', function () {
 		/* This event will be triggered before date range picker open animation */
 		console.log('before open');
 	})
-	.bind('DRPick-opened', function () {
+	.bind('DRPEx-opened', function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	}); ;
@@ -177,14 +177,14 @@ $(function () {
 	});
 	$('#date-range13').dateRangePicker({
 		singleDate : true
-	}).bind('DRPick-first-date', function (event, obj) {
+	}).bind('DRPEx-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('range-start', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
 		// }
-	}).bind('DRPick-change', function (event, obj) {
+	}).bind('DRPEx-change', function (event, obj) {
 		/* This event will be triggered when second date is selected */
 		console.log('change', obj);
 		// obj will be something like this:
@@ -194,23 +194,23 @@ $(function () {
 		//	 	value: "2013-06-05 to 2013-06-07"
 		// }
 	})
-	.bind('DRPick-apply', function (event, obj) {
+	.bind('DRPEx-apply', function (event, obj) {
 		/* This event will be triggered when user clicks on the apply button */
 		console.log('apply', obj);
 	})
-	.bind('DRPick-close', function () {
+	.bind('DRPEx-close', function () {
 		/* This event will be triggered before date range picker close animation */
 		console.log('before close');
 	})
-	.bind('DRPick-closed', function () {
+	.bind('DRPEx-closed', function () {
 		/* This event will be triggered after date range picker close animation */
 		console.log('after close');
 	})
-	.bind('DRPick-open', function () {
+	.bind('DRPEx-open', function () {
 		/* This event will be triggered before date range picker open animation */
 		console.log('before open');
 	})
-	.bind('DRPick-opened', function () {
+	.bind('DRPEx-opened', function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	});
@@ -218,14 +218,14 @@ $(function () {
 		autoClose : true,
 		singleDate : true,
 		singleMonth : true
-	}).bind('DRPick-first-date', function (event, obj) {
+	}).bind('DRPEx-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
 		console.log('range-start', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
 		// }
-	}).bind('DRPick-change', function (event, obj) {
+	}).bind('DRPEx-change', function (event, obj) {
 		/* This event will be triggered when second date is selected */
 		console.log('change', obj);
 		// obj will be something like this:
@@ -235,23 +235,23 @@ $(function () {
 		//	 	value: "2013-06-05 to 2013-06-07"
 		// }
 	})
-	.bind('DRPick-apply', function (event, obj) {
+	.bind('DRPEx-apply', function (event, obj) {
 		/* This event will be triggered when user clicks on the apply button */
 		console.log('apply', obj);
 	})
-	.bind('DRPick-close', function () {
+	.bind('DRPEx-close', function () {
 		/* This event will be triggered before date range picker close animation */
 		console.log('before close');
 	})
-	.bind('DRPick-closed', function () {
+	.bind('DRPEx-closed', function () {
 		/* This event will be triggered after date range picker close animation */
 		console.log('after close');
 	})
-	.bind('DRPick-open', function () {
+	.bind('DRPEx-open', function () {
 		/* This event will be triggered before date range picker open animation */
 		console.log('before open');
 	})
-	.bind('DRPick-opened', function () {
+	.bind('DRPEx-opened', function () {
 		/* This event will be triggered after date range picker open animation */
 		console.log('after open');
 	});
@@ -275,36 +275,36 @@ $(function () {
 	});
 	$('#date-range16').dateRangePicker({
 		format : 'YYYY-MM-DD'
-	}).bind('DRPick-change', function (evt, obj) {
+	}).bind('DRPEx-change', function (evt, obj) {
 		alert('date1: ' + obj.date1 + ' / date2: ' + obj.date2);
 	});
 	$('#date-range16-open').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('DRPick').open();
+		$('#date-range16').data('DRPEx').open();
 	});
 	$('#date-range16-close').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('DRPick').close();
+		$('#date-range16').data('DRPEx').close();
 	});
 	$('#date-range16-set').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('DRPick').setDateRange('2013-11-20', '2014-08-25');
+		$('#date-range16').data('DRPEx').setDateRange('2013-11-20', '2014-08-25');
 	});
 	$('#date-range16-set-silent').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('DRPick').setDateRange('2014-11-03', '2015-02-12', true);
+		$('#date-range16').data('DRPEx').setDateRange('2014-11-03', '2015-02-12', true);
 	});
 	$('#date-range16-clear').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('DRPick').clear();
+		$('#date-range16').data('DRPEx').clear();
 	});
 	$('#date-range16-destroy').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('DRPick').destroy();
+		$('#date-range16').data('DRPEx').destroy();
 	});
 	$('#date-range16-reset').click(function (evt) {
 		evt.stopPropagation();
-		$('#date-range16').data('DRPick').resetMonthsView();
+		$('#date-range16').data('DRPEx').resetMonthsView();
 	});
 	$('#date-range17').dateRangePicker({
 		stickyMonths : true,

@@ -68,9 +68,8 @@
 						return $(this).val();
 					},
 					setValue : function (s) {
-						if (s != $(this).val()) {
+						if (s != $(this).val())
 							$(this).val(s).change();
-						}
 					},
 					dateRange : {
 						start : false,
@@ -92,7 +91,7 @@
 					singleDate : false,
 					lookBehind : false,
 					batchMode : false,
-					duration : 200,
+					animationTime : 200,
 					stickyMonths : false,
 					selectForward : false,
 					selectBackward : false,
@@ -142,9 +141,9 @@
 			};
 
 			if (opt.dropTrigger) {
-				state.anchor.bind('click.DRPick', function (evt) {
+				state.anchor.bind('click.DRPEx', function (evt) {
 					if (!state.active) {
-						openDatePicker(opt.duration);
+						openDatePicker(opt.animationTime);
 					}
 				});
 			}
@@ -152,56 +151,79 @@
 				openDatePicker(0);
 
 			// expose some api
-			state.anchor.data('DRPick', {
+			state.anchor.data('DRPEx', {
 				setStart : function (d1, silent) {
-					if (d1.constructor == String) {
+					statusCheck(true);
+					if (d1.constructor == String)
 						d1 = moment(d1, opt.format).toDate();
-					}
 					setDateRange(d1, state.selRange.end ? moment(state.selRange.end).toDate() : d1, silent);
 					return this;
 				},
 				setEnd : function (d2, silent) {
-					if (d2.constructor == String) {
+					statusCheck(true);
+					if (d2.constructor == String)
 						d2 = moment(d2, opt.format).toDate();
-					}
 					setDateRange(state.selRange.start ? moment(state.selRange.start).toDate() : d2, d2, silent);
 					return this;
 				},
 				setDateRange : function (d1, d2, silent) {
-					if (d1.constructor == String) {
+					statusCheck(true);
+					if (d1.constructor == String)
 						d1 = moment(d1, opt.format).toDate();
-					}
-					if (d2.constructor == String) {
+					if (d2.constructor == String)
 						d2 = moment(d2, opt.format).toDate();
-					}
 					setDateRange(d1, d2, silent);
 				},
 				setDateText : function (str, silent) {
+					statusCheck(true);
 					var Values = parseStringDates(str);
 					if (Values)
 						applyDates(Values, silent);
 					return Values;
 				},
-				open : openDatePicker,
-				close : closeDatePicker,
-				clear : clearSelection,
-				redraw : redrawDatePicker,
-				resetMonthsView : resetMonthsView,
+				open : function (duration) {
+					statusCheck();
+					return openDatePicker(duration)
+				},
+				close : function (duration) {
+					statusCheck();
+					return closeDatePicker(duration);
+				},
+				clear : function () {
+					statusCheck();
+					return clearSelection();
+				},
+				redraw : function () {
+					statusCheck();
+					if (state.wrapper)
+						redrawDatePicker();
+				},
+				resetMonthsView : function () {
+					statusCheck();
+					if (state.wrapper)
+						resetMonthsView();
+				},
 				wrapper : function () {
+					statusCheck(true);
 					return state.wrapper;
 				},
 				anchor : function () {
+					statusCheck();
 					return state.anchor;
 				},
 				isActive : function () {
+					statusCheck();
 					return state.active;
 				},
 				destroy : function () {
-					state.anchor.unbind('.DRPick');
-					state.anchor.data('DRPick', undefined);
-					state.wrapper.remove();
-					$(window).unbind('resize.DRPick scroll.DRPick', calcPosition);
-					$(document).unbind('click.DRPick', defocusClick);
+					statusCheck();
+					state.anchor.unbind('.DRPEx');
+					state.anchor.data('DRPEx', undefined);
+					if (state.wrapper)
+						state.wrapper.remove();
+					state.wrapper = null;
+					$(window).unbind('resize.DRPEx scroll.DRPEx', calcPosition);
+					$(document).unbind('click.DRPEx', defocusClick);
 				}
 			});
 			return this;
@@ -400,7 +422,15 @@
 
 				if (!opt.alwaysOpen) {
 					//if user click other place of the webpage, close date range picker window
-					$(document).bind('click.DRPick', defocusClick);
+					$(document).bind('click.DRPEx', defocusClick);
+				}
+			}
+			function statusCheck(initialized) {
+				if (!state.wrapper) {
+					if (state.wrapper !== undefined)
+						throw new Error('Already destroyed');
+					if (initialized)
+						throw new Error('Not yet initialized');
 				}
 			}
 			function ResolveLocalizer(locale) {
@@ -430,7 +460,7 @@
 			function defocusClick(evt) {
 				if (!IsClickContained(evt, state.anchor[0]) && !IsClickContained(evt, state.wrapper[0])) {
 					if (state.active) {
-						closeDatePicker(opt.duration);
+						closeDatePicker(opt.animationTime);
 					}
 				}
 			}
@@ -489,7 +519,7 @@
 					return true;
 				}
 			}
-			function openDatePicker(animationTime) {
+			function openDatePicker(duration) {
 				if (!state.active) {
 					if (!state.wrapper)
 						_init();
@@ -511,24 +541,23 @@
 					});
 
 					var afterAnim = function () {
-						state.anchor.trigger('DRPick-opened', {
+						state.anchor.trigger('DRPEx-opened', {
 							relatedTarget : state.wrapper
 						});
 					};
 					if (opt.customOpenAnimation) {
 						opt.customOpenAnimation.call(state.wrapper[0], afterAnim);
 					} else {
-						state.wrapper.slideDown(animationTime, afterAnim);
+						state.wrapper.slideDown(duration, afterAnim);
 					}
-					state.anchor.trigger('DRPick-open', {
+					state.anchor.trigger('DRPEx-open', {
 						relatedTarget : state.wrapper
 					});
-					if (!opt.container) {
-						$(window).bind('resize.DRPick scroll.DRPick', calcPosition);
-					}
+					if (!opt.container)
+						$(window).bind('resize.DRPEx scroll.DRPEx', calcPosition);
 					if (opt.watchValueChange) {
 						var domChangeTimer = null;
-						state.anchor.bind('input.DRPick', function () {
+						state.anchor.bind('input.DRPEx', function () {
 							clearTimeout(domChangeTimer);
 							domChangeTimer = setTimeout(function () {
 									domChangeTimer = null;
@@ -538,31 +567,33 @@
 								}, 200);
 						});
 					}
+					return true;
 				}
+				return false;
 			}
-			function closeDatePicker(animationTime) {
+			function closeDatePicker(duration) {
 				if (!opt.alwaysOpen && state.active) {
 					state.active = false;
 					var afterAnim = function () {
-						state.anchor.trigger('DRPick-closed', {
+						state.anchor.trigger('DRPEx-closed', {
 							relatedTarget : state.wrapper
 						});
 					};
 					if (opt.customCloseAnimation) {
 						opt.customCloseAnimation.call(state.wrapper[0], afterAnim);
 					} else {
-						state.wrapper.slideUp(animationTime, afterAnim);
+						state.wrapper.slideUp(duration, afterAnim);
 					}
-					state.anchor.trigger('DRPick-close', {
+					state.anchor.trigger('DRPEx-close', {
 						relatedTarget : state.wrapper
 					});
-					if (!opt.container) {
-						$(window).unbind('resize.DRPick scroll.DRPick', calcPosition);
-					}
-					if (opt.watchValueChange) {
-						state.anchor.unbind('input.DRPick');
-					}
+					if (!opt.container)
+						$(window).unbind('resize.DRPEx scroll.DRPEx', calcPosition);
+					if (opt.watchValueChange)
+						state.anchor.unbind('input.DRPEx');
+					return true;
 				}
+				return false;
 			}
 			function parseStringDates(str) {
 				var vals = (str && str.constructor == String) ? str.trim() : undefined;
@@ -592,11 +623,7 @@
 				return vals;
 			}
 			function applyDates(vals, silent) {
-				if (vals.length > 1) {
-					setDateRange(vals[0], vals[1], silent);
-				} else {
-					setDateRange(vals[0], vals[0], silent);
-				}
+				setDateRange(vals[0], vals.length > 1 ? vale[1] : vals[0], silent);
 			}
 			function checkAndSetDate() {
 				var Values = parseStringDates(opt.getValue.call(state.anchor[0]));
@@ -615,17 +642,19 @@
 				state.wrapper.find('.drp_top-bar div').width(calendarWidth - w4 - 2);
 			}
 			function clearSelection() {
-				state.selRange.start = false;
-				state.selRange.end = false;
-				state.wrapper.find('.day.checked').removeClass('checked');
-				state.wrapper.find('.day.range-end').removeClass('range-end');
-				state.wrapper.find('.day.range-start').removeClass('range-start');
-				checkSelectionValid();
-				showSelectedInfo();
-				showSelectedDays();
-				state.anchor.trigger('DRPick-change', {
-					'value' : ""
-				});
+				if (state.selRange.start || state.selRange.end) {
+					state.selRange.start = false;
+					state.selRange.end = false;
+					state.wrapper.find('.day.checked').removeClass('checked');
+					state.wrapper.find('.day.range-end').removeClass('range-end');
+					state.wrapper.find('.day.range-start').removeClass('range-start');
+					checkSelectionValid();
+					showSelectedInfo();
+					showSelectedDays();
+					state.anchor.trigger('DRPEx-change', {});
+					return true;
+				}
+				return false;
 			}
 			function handleStart(time) {
 				var r = time;
@@ -680,7 +709,7 @@
 				clearHovering();
 				if (state.selRange.start && !state.selRange.end) {
 					var dateRange = getDateString(state.selRange.start);
-					state.anchor.trigger('DRPick-first-date', {
+					state.anchor.trigger('DRPEx-first-date', {
 						'value' : dateRange,
 						'date1' : new Date(state.selRange.start)
 					});
@@ -906,7 +935,7 @@
 					endDateStr;
 					if (opt.singleDate) {
 						dateRangeStr = getDateString(state.selRange.start)
-							state.anchor.trigger('DRPick-apply', {
+							state.anchor.trigger('DRPEx-apply', {
 								'value' : dateRangeStr,
 								'date1' : new Date(state.selRange.start)
 							});
@@ -914,7 +943,7 @@
 						startDateStr = getDateString(state.selRange.start);
 						endDateStr = getDateString(state.selRange.end),
 						dateRangeStr = startDateStr + opt.separator + endDateStr;
-						state.anchor.trigger('DRPick-apply', {
+						state.anchor.trigger('DRPEx-apply', {
 							'value' : dateRangeStr,
 							'date1' : [new Date(state.selRange.start), startDateStr],
 							'date2' : [new Date(state.selRange.end), endDateStr]
@@ -922,7 +951,7 @@
 					}
 					opt.setValue.call(state.anchor[0], dateRangeStr, startDateStr, endDateStr);
 				}
-				closeDatePicker(opt.duration);
+				closeDatePicker(opt.animationTime);
 			}
 			function autoclose() {
 				if (opt.autoClose && state.selRange.start) {
@@ -1036,7 +1065,7 @@
 
 				if (state.selRange.start && opt.singleDate) {
 					if (!silent) {
-						state.anchor.trigger('DRPick-change', {
+						state.anchor.trigger('DRPEx-change', {
 							'date1' : new Date(state.selRange.start)
 						});
 					}
@@ -1044,7 +1073,7 @@
 					state.wrapper.find('.selected-days').show()
 					.find('.selected-days-num').html(countDays(state.selRange.end, state.selRange.start));
 					if (!silent) {
-						state.anchor.trigger('DRPick-change', {
+						state.anchor.trigger('DRPEx-change', {
 							'date1' : new Date(state.selRange.start),
 							'date2' : new Date(state.selRange.end)
 						});
