@@ -48,6 +48,7 @@
 					'range-start-bound' : 'Start date range out-of-bound',
 					'range-end-bound' : 'End date range out-of-bound',
 					'batch-invalid' : 'Date range does not satisfy batch constraint "%s"',
+					'disabled-range' : 'Date range spans across disabled dates',
 					'default-more' : 'Please select a date range longer than %d days',
 					'default-single' : 'Please select a date',
 					'default-less' : 'Please select a date range less than %d days',
@@ -62,7 +63,7 @@
 					format : 'YYYY-MM-DD',
 					separator : ' to ',
 					language : 'auto',
-					startOfWeek : 'sunday', // or monday
+					startOfWeek : undefined,
 					getValue : function () {
 						return $(this).val();
 					},
@@ -200,7 +201,7 @@
 					state.anchor.data('DRPick', undefined);
 					state.wrapper.remove();
 					$(window).unbind('resize.DRPick scroll.DRPick', calcPosition);
-					$(document).unbind('click.DRPick', autoCloseClick);
+					$(document).unbind('click.DRPick', defocusClick);
 				}
 			});
 			return this;
@@ -237,6 +238,10 @@
 					.replace(/Y(\s*)[^YMD]*D[^M]*/, 'Y$1')
 					.replace(/M(\s*)[^YMD]*D[^Y]*/, 'M$1')
 					.replace(/[^YM]*D[^YM]*/, '');
+
+				// Derive startOfWeek
+				if (opt.startOfWeek === undefined)
+					opt.startOfWeek = (state.formatter.startOf('week').isoWeekday() === 7 ? 0 : 1);
 
 				state.wrapper = createDom();
 				(opt.container || $('body')).append(state.wrapper);
@@ -343,7 +348,7 @@
 						var day = parseInt(shortcut.split(',', 2)[1]);
 						if (day == 0) {
 							clearSelection();
-							resetMonthsView(now);
+							resetMonthsView();
 						} else {
 							startDate = now.clone().add(day > 0 ? 1 : -1, 'day').toDate();
 							endDate = now.add(day, 'day').toDate();
@@ -351,11 +356,11 @@
 					} else if (shortcut.indexOf('week') != -1) {
 						var dir = shortcut.indexOf('prev,') == -1;
 						if (dir) {
-							startDate = now.day(opt.startOfWeek == 'monday' ? 8 : 7).toDate();
+							startDate = now.day(opt.startOfWeek ? 8 : 7).toDate();
 						} else {
-							startDate = now.day(opt.startOfWeek == 'monday' ? -6 : -7).toDate();
+							startDate = now.day(opt.startOfWeek ? -6 : -7).toDate();
 						}
-						endDate = now.clone().day(opt.startOfWeek == 'monday' ? 7 : 6).toDate();
+						endDate = now.clone().day(opt.startOfWeek ? 7 : 6).toDate();
 					} else if (shortcut.indexOf('month') != -1) {
 						var dir = shortcut.indexOf('prev,') == -1;
 						if (dir) {
@@ -384,7 +389,8 @@
 						// move calendars to show this date's month and next months
 						if (data && data.length == 1) {
 							var movetodate = data[0];
-							resetMonthsView(movetodate);
+							showMonth(movetodate, 'month1');
+							showGap();
 						}
 					}
 					if (startDate && endDate) {
@@ -394,7 +400,7 @@
 
 				if (!opt.alwaysOpen) {
 					//if user click other place of the webpage, close date range picker window
-					$(document).bind('click.DRPick', autoCloseClick);
+					$(document).bind('click.DRPick', defocusClick);
 				}
 			}
 			function ResolveLocalizer(locale) {
@@ -421,7 +427,7 @@
 				return container.contains(evt.target) || evt.target == container;
 				//(container.childNodes != undefined && $.inArray(evt.target, container.childNodes) >= 0);
 			}
-			function autoCloseClick(evt) {
+			function defocusClick(evt) {
 				if (!IsClickContained(evt, state.anchor[0]) && !IsClickContained(evt, state.wrapper[0])) {
 					if (state.active) {
 						closeDatePicker(opt.duration);
@@ -612,8 +618,8 @@
 				state.selRange.start = false;
 				state.selRange.end = false;
 				state.wrapper.find('.day.checked').removeClass('checked');
-				state.wrapper.find('.day.last-date-selected').removeClass('last-date-selected');
-				state.wrapper.find('.day.first-date-selected').removeClass('first-date-selected');
+				state.wrapper.find('.day.range-end').removeClass('range-end');
+				state.wrapper.find('.day.range-start').removeClass('range-start');
 				checkSelectionValid();
 				showSelectedInfo();
 				showSelectedDays();
@@ -624,7 +630,7 @@
 			function handleStart(time) {
 				var r = time;
 				if (opt.batchMode === 'week-range') {
-					r = moment(time).day(opt.startOfWeek === 'monday' ? 1 : 0).valueOf();
+					r = moment(time).day(opt.startOfWeek ? 1 : 0).valueOf();
 				} else if (opt.batchMode === 'month-range') {
 					r = moment(time).startOf('month').valueOf();
 				}
@@ -633,16 +639,16 @@
 			function handleEnd(time) {
 				var r = time;
 				if (opt.batchMode === 'week-range') {
-					r = moment(time).day(opt.startOfWeek === 'monday' ? 7 : 6).valueOf();
+					r = moment(time).day(opt.startOfWeek ? 7 : 6).valueOf();
 				} else if (opt.batchMode === 'month-range') {
 					r = moment(time).endOf('month').startOf('day').valueOf();
 				}
 				return r;
 			}
 			function dayClicked(day) {
-				if (day.hasClass('invalid'))
-					return;
 				if (state.selWeek)
+					return;
+				if (!day.hasClass('valid') || day.hasClass('unselectable'))
 					return;
 				var time = parseInt(day.attr('SOD-time'));
 				day.addClass('checked');
@@ -650,8 +656,8 @@
 					state.selRange.start = time;
 					state.selRange.end = time;
 				} else if (opt.batchMode === 'week') {
-					state.selRange.start = moment(time).day(opt.startOfWeek === 'monday' ? 1 : 0).valueOf();
-					state.selRange.end = moment(time).day(opt.startOfWeek === 'monday' ? 7 : 6).valueOf();
+					state.selRange.start = moment(time).day(opt.startOfWeek ? 1 : 0).valueOf();
+					state.selRange.end = moment(time).day(opt.startOfWeek ? 7 : 6).valueOf();
 				} else if (opt.batchMode === 'weekdays') {
 					state.selRange.start = moment(time).day(1).valueOf();
 					state.selRange.end = moment(time).day(5).valueOf();
@@ -679,7 +685,7 @@
 						'date1' : new Date(state.selRange.start)
 					});
 					dayHovering(day);
-					state.wrapper.find('.week-number').removeClass('week-number-selected');
+					state.wrapper.find('.week-number').removeClass('week-ranged');
 				}
 				updateSelectableRange(time);
 				if (state.selWeek)
@@ -693,14 +699,14 @@
 				state.wrapper.find('.day').each(function () {
 					var time = parseInt($(this).attr('SOD-time'));
 					if (startTime == time) {
-						$(this).addClass('first-date-selected');
-						$(this).removeClass('last-date-selected');
+						$(this).addClass('range-start');
+						$(this).removeClass('range-end');
 					} else if (endTime == time) {
-						$(this).removeClass('first-date-selected');
-						$(this).addClass('last-date-selected');
+						$(this).removeClass('range-start');
+						$(this).addClass('range-end');
 					} else {
-						$(this).removeClass('first-date-selected');
-						$(this).removeClass('last-date-selected');
+						$(this).removeClass('range-start');
+						$(this).removeClass('range-end');
 					}
 					if (startTime <= time && endTime >= time) {
 						$(this).addClass('hovering');
@@ -710,22 +716,24 @@
 				});
 			}
 			function weekNumberClicked(week) {
+				if (opt.singleDate)
+					return;
 				if ((state.selRange.start) && (!state.selRange.end) && (!state.selWeek))
 					return;
-				if (opt.singleDate)
+				if (!week.hasClass('valid') || week.hasClass('unselectable'))
 					return;
 				var thisTime = parseInt(week.attr('SOW-time'));
 				if (!state.selWeek) {
 					state.selWeek = thisTime;
 					var date = new Date(thisTime);
-					state.selRange.start = moment(date).day(opt.startOfWeek == 'monday' ? 1 : 0).valueOf();
+					state.selRange.start = moment(date).day(opt.startOfWeek ? 1 : 0).valueOf();
 					state.selRange.end = false;
 
-					var endTime = moment(date).day(opt.startOfWeek == 'monday' ? 7 : 6).valueOf();
+					var endTime = moment(date).day(opt.startOfWeek ? 7 : 6).valueOf();
 					state.wrapper.find('.day.checked').removeClass('checked');
 					weekSelectionHovering(state.selRange.start, endTime);
-					state.wrapper.find('.week-number-selected').removeClass('week-number-selected');
-					week.addClass('week-number-selected');
+					state.wrapper.find('.week-ranged').removeClass('week-ranged');
+					week.addClass('week-ranged');
 
 					updateSelectableRange();
 					checkSelectionValid();
@@ -735,8 +743,8 @@
 					var date1 = new Date(thisTime < state.selWeek ? thisTime : state.selWeek);
 					var date2 = new Date(thisTime < state.selWeek ? state.selWeek : thisTime);
 					state.selWeek = false;
-					state.selRange.start = moment(date1).day(opt.startOfWeek == 'monday' ? 1 : 0).valueOf();
-					state.selRange.end = moment(date2).day(opt.startOfWeek == 'monday' ? 7 : 6).valueOf();
+					state.selRange.start = moment(date1).day(opt.startOfWeek ? 1 : 0).valueOf();
+					state.selRange.end = moment(date2).day(opt.startOfWeek ? 7 : 6).valueOf();
 
 					checkSelectionValid();
 					showSelectedInfo();
@@ -752,20 +760,20 @@
 				var thisTime = parseInt(week.attr('SOW-time'));
 				if (thisTime >= state.selWeek) {
 					var date = new Date(thisTime);
-					var endTime = moment(date).day(opt.startOfWeek == 'monday' ? 7 : 6).valueOf();
+					var endTime = moment(date).day(opt.startOfWeek ? 7 : 6).valueOf();
 					weekSelectionHovering(state.selRange.start, endTime);
 				} else {
 					var date1 = new Date(thisTime);
 					var date2 = new Date(state.selWeek);
-					var startTime = moment(date1).day(opt.startOfWeek == 'monday' ? 1 : 0).valueOf();
-					var endTime = moment(date2).day(opt.startOfWeek == 'monday' ? 7 : 6).valueOf();
+					var startTime = moment(date1).day(opt.startOfWeek ? 1 : 0).valueOf();
+					var endTime = moment(date2).day(opt.startOfWeek ? 7 : 6).valueOf();
 					weekSelectionHovering(startTime, endTime);
 				}
 			}
 			function isValidTime(time) {
 				if (isDateOutOfBounds(time))
 					return false;
-				if (state.selRange.start && !state.selRange.end && !opt.singleDate) {
+				if (!opt.singleDate) {
 					//check maxDays and minDays setting
 					if ((opt.maxDays > 0 && countDays(time, state.selRange.start) > opt.maxDays) ||
 						(opt.minDays > 0 && countDays(time, state.selRange.start) < opt.minDays))
@@ -774,37 +782,53 @@
 					if ((opt.selectForward && time < state.selRange.start) ||
 						(opt.selectBackward && time > state.selRange.start))
 						return false;
-					//check disabled days
-					if (opt.beforeShowDay && typeof opt.beforeShowDay == 'function') {
-						var dayCursor = moment(time);
-						while (countDays(dayCursor, state.selRange.start) > 1) {
-							var arr = opt.beforeShowDay(dayCursor.toDate());
-							if (arr[0] === false)
-								return false;
-							dayCursor.add(time < state.selRange.start ? 1 : -1, 'day');
-						}
+				}
+				//check disabled days
+				if (opt.beforeShowDay) {
+					var dayCursor = moment(time);
+					while (compareDay(dayCursor, state.selRange.start)) {
+						var arr = opt.beforeShowDay(dayCursor.toDate());
+						if (arr[0] === false)
+							return false;
+						dayCursor.add(time < state.selRange.start ? 1 : -1, 'day');
 					}
+					return opt.beforeShowDay(dayCursor.toDate())[0] !== false;
 				}
 				return true;
 			}
 			function updateSelectableRange() {
-				state.wrapper.find('.day.invalid.tmp').removeClass('tmp invalid').addClass('valid');
-				state.wrapper.find('.week-number.invalid.tmp').removeClass('tmp invalid').addClass('valid');
-				if (state.selRange.start && !state.selRange.end) {
-					state.wrapper.find('.day.toMonth.valid').each(function () {
-						var time = parseInt($(this).attr('SOD-time'));
-						if (!isValidTime(time))
-							$(this).addClass('invalid tmp').removeClass('valid');
-						else
-							$(this).addClass('valid tmp').removeClass('invalid');
-					});
-					state.wrapper.find('.week-number').each(function () {
-						var time = parseInt($(this).attr('SOW-time'));
-						if (!isValidTime(time))
-							$(this).addClass('invalid tmp').removeClass('valid');
-						else
-							$(this).addClass('valid tmp').removeClass('invalid');
-					});
+				state.wrapper.find('.unselectable').removeClass('unselectable');
+				if (state.selRange.start) {
+					if (!state.selRange.end) {
+						state.wrapper.find('.day.toMonth.valid').each(function () {
+							var time = parseInt($(this).attr('SOD-time'));
+							if (!isValidTime(time))
+								$(this).addClass('unselectable');
+						});
+						state.wrapper.find('.week-number.valid').each(function () {
+							var time = parseInt($(this).attr('SOW-time'));
+							if (time >= state.selRange.start)
+								time = moment(time).day(opt.startOfWeek ? 7 : 6).toDate();
+							if (!isValidTime(time))
+								$(this).addClass('unselectable');
+						});
+					} else {
+						state.wrapper.find('.day.toMonth.valid').each(function () {
+							var time = parseInt($(this).attr('SOD-time'));
+							if ((time >= state.selRange.start) && (time <= state.selRange.end))
+								if (!isValidTime(time))
+									$(this).addClass('unselectable');
+						});
+						state.wrapper.find('.week-number.valid').each(function () {
+							var time = parseInt($(this).attr('SOW-time'));
+							if (time >= state.selRange.start) {
+								time = moment(time).day(opt.startOfWeek ? 7 : 6).toDate();
+								if (time <= state.selRange.end)
+									if (!isValidTime(time))
+										$(this).addClass('unselectable');
+							}
+						});
+					}
 				}
 				return true;
 			}
@@ -815,7 +839,7 @@
 				var tooltip = '';
 				if (day.hasClass('has-tooltip') && day.attr('data-tooltip')) {
 					tooltip = '<span style="white-space:nowrap">' + day.attr('data-tooltip') + '</span>';
-				} else if (!day.hasClass('invalid')) {
+				} else if (day.hasClass('valid') && !day.hasClass('unselectable')) {
 					if (opt.singleDate) {
 						state.wrapper.find('.day.hovering').removeClass('hovering');
 						day.addClass('hovering');
@@ -941,8 +965,8 @@
 					var mEnd = moment(state.selRange.end);
 					switch (opt.batchMode) {
 					case 'week':
-						if (!mStart.isSame(mStart.clone().day(opt.startOfWeek == 'monday' ? 1 : 0)) ||
-							!mEnd.isSame(mStart.clone().day(opt.startOfWeek == 'monday' ? 7 : 6)))
+						if (!mStart.isSame(mStart.clone().day(opt.startOfWeek ? 1 : 0)) ||
+							!mEnd.isSame(mStart.clone().day(opt.startOfWeek ? 7 : 6)))
 							valid = false;
 						break;
 					case 'weekdays':
@@ -961,8 +985,8 @@
 							valid = false;
 						break;
 					case 'week-range':
-						if (!mStart.isSame(mStart.clone().day(opt.startOfWeek == 'monday' ? 1 : 0)) ||
-							!mEnd.isSame(mEnd.clone().day(opt.startOfWeek == 'monday' ? 7 : 6)))
+						if (!mStart.isSame(mStart.clone().day(opt.startOfWeek ? 1 : 0)) ||
+							!mEnd.isSame(mEnd.clone().day(opt.startOfWeek ? 7 : 6)))
 							valid = false;
 						break;
 					case 'month-range':
@@ -975,6 +999,13 @@
 					}
 					if (!valid) {
 						var msg = localize('batch-invalid').replace('%s', opt.batchMode);
+						state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
+					}
+				}
+				if (valid) {
+					valid = isValidTime(state.selRange.end);
+					if (!valid) {
+						var msg = localize('disabled-range');
 						state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
 					}
 				}
@@ -1076,33 +1107,33 @@
 					} else {
 						$(this).removeClass('checked');
 					}
-					//add first-date-selected class name to the first date selected
+					//add range-start class name to the first date selected
 					if (state.selRange.start == time) {
-						$(this).addClass('first-date-selected');
+						$(this).addClass('range-start');
 					} else {
-						$(this).removeClass('first-date-selected');
+						$(this).removeClass('range-start');
 					}
-					//add last-date-selected
+					//add range-end
 					if (state.selRange.end == time) {
-						$(this).addClass('last-date-selected');
+						$(this).addClass('range-end');
 					} else {
-						$(this).removeClass('last-date-selected');
+						$(this).removeClass('range-end');
 					}
 				});
 				state.wrapper.find('.week-number').each(function () {
 					if (parseInt($(this).attr('SOW-time')) == state.selWeek) {
-						$(this).addClass('week-number-selected');
+						$(this).addClass('week-ranged');
 					}
 				});
 				if (state.selRange.end) {
 					state.wrapper.find('.week-number').each(function () {
 						var weekdate = new Date(parseInt($(this).attr('SOW-time')));
-						var startTime = moment(weekdate).day(opt.startOfWeek == 'monday' ? 1 : 0).valueOf();
-						var endTime = moment(weekdate).day(opt.startOfWeek == 'monday' ? 7 : 6).valueOf();
+						var startTime = moment(weekdate).day(opt.startOfWeek ? 1 : 0).valueOf();
+						var endTime = moment(weekdate).day(opt.startOfWeek ? 7 : 6).valueOf();
 						if ((startTime >= state.selRange.start) && (endTime <= state.selRange.end)) {
-							$(this).addClass('week-number-selected');
+							$(this).addClass('week-ranged');
 						} else {
-							$(this).removeClass('week-number-selected');
+							$(this).removeClass('week-ranged');
 						}
 					});
 				}
@@ -1246,7 +1277,7 @@
 						value : localize('apply-disabled'),
 						'class' : 'apply-btn'
 						 + ' disabled'
-						 + (opt.autoClose ? 'hide' : '')
+						 + (opt.autoClose ? ' hide' : '')
 						 + (opt.applyBtnClass ? ' ' + opt.applyBtnClass : '')
 					}, '');
 					html += tagGen('/div');
@@ -1259,7 +1290,7 @@
 					var Ret = '';
 					if (opt.showWeekNumbers)
 						Ret += tagGen('th', {}, localize('week-number'));
-					if (opt.startOfWeek == 'monday') {
+					if (opt.startOfWeek) {
 						Ret += tagGen('th', {}, localize('week-1'))
 						 + tagGen('th', {}, localize('week-2'))
 						 + tagGen('th', {}, localize('week-3'))
@@ -1447,7 +1478,7 @@
 
 				d.setDate(1);
 				var dayOfWeek = d.getDay();
-				if ((dayOfWeek === 0) && (opt.startOfWeek === 'monday')) {
+				if ((dayOfWeek === 0) && (opt.startOfWeek)) {
 					// add one week
 					dayOfWeek = 7;
 				}
@@ -1459,7 +1490,7 @@
 							type : 'lastMonth',
 							day : day.getDate(),
 							time : day.getTime(),
-							valid : isValidTime(day.getTime())
+							valid : !isDateOutOfBounds(day.getTime())
 						});
 					}
 				}
@@ -1471,7 +1502,7 @@
 						type : today.getMonth() == toMonth ? 'toMonth' : 'nextMonth',
 						day : today.getDate(),
 						time : today.getTime(),
-						valid : isValidTime(today.getTime())
+						valid : !isDateOutOfBounds(today.getTime())
 					});
 				}
 				var html = '';
@@ -1483,45 +1514,55 @@
 					if (days[week * 7].type == 'nextMonth')
 						break;
 					html += tagGen('tr');
+					var weekHTML = '';
+					var headDay;
+					var validWeek = true;
 					for (var day = 0; day < 7; day++) {
-						var _day = (opt.startOfWeek == 'monday') ? day + 1 : day;
-						var today = days[week * 7 + _day];
+						var dayIdx = week * 7 + ((opt.startOfWeek) ? day + 1 : day);
+						var today = days[dayIdx];
+						if (day === 0)
+							headDay = today;
+
 						today.extraClass = '';
 						today.tooltip = '';
-						if (today.valid && opt.beforeShowDay && typeof opt.beforeShowDay == 'function') {
-							var _r = opt.beforeShowDay(today.date);
-							today.valid = _r[0];
-							today.extraClass = _r[1] || '';
-							today.tooltip = _r[2] || '';
-							if (today.tooltip !== '')
-								today.extraClass += ' has-tooltip ';
+						if (today.valid) {
+							if (opt.beforeShowDay) {
+								var _r = opt.beforeShowDay(today.date);
+								today.valid = _r[0];
+								today.extraClass = _r[1] || '';
+								today.tooltip = _r[2] || '';
+								if (today.tooltip !== '')
+									today.extraClass += ' has-tooltip ';
+							}
 						}
-						if (opt.startOfWeek == 'monday') {
+						validWeek = validWeek && today.valid;
+						if (opt.startOfWeek) {
 							if (day >= 5)
 								today.extraClass += ' weekend ';
 						} else {
 							if (day == 0 || day == 6)
 								today.extraClass += ' weekend ';
 						}
-						if (day === 0 && opt.showWeekNumbers) {
-							html += tagGen('td', {},
-								tagGen('div', {
-									'class' : 'week-number',
-									'SOW-time' : today.time
-								}, opt.getWeekNumber(today.date)));
-						}
-						html += tagGen('td', {},
+						weekHTML += tagGen('td', {},
 							tagGen('div', {
 								'SOD-time' : today.time,
 								'data-tooltip' : today.tooltip,
 								'class' : 'day'
 								 + ' ' + today.type
 								 + ' ' + today.extraClass
-								 + (today.valid ? ' valid' : ' invalid')
+								 + ' ' + (today.valid ? 'valid' : (today.valid === false ? 'invalid' : 'skipped'))
 								 + ((now && now.date() == today.day) ? ' real-today' : '')
 							}, showDayHTML(today.time, today.day)));
 					}
-					html += tagGen('/tr');
+					if (opt.showWeekNumbers) {
+						html += tagGen('td', {},
+							tagGen('div', {
+								'class' : 'week-number'
+								 + ' ' + (validWeek ? 'valid' : 'invalid'),
+								'SOW-time' : headDay.time
+							}, opt.getWeekNumber(headDay.date)));
+					}
+					html += weekHTML + tagGen('/tr');
 				}
 				return html;
 			}

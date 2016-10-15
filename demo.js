@@ -4,7 +4,7 @@ $(function () {
 		window.console.log = function () {};
 	}
 	$('#add-slate').click(function () {
-		$('head').append('<link rel="stylesheet" type="text/css" href="https://bootswatch.com/slate/bootstrap.min.css">');
+		$('head').append('<link rel="stylesheet" type="text/css" href="https://bootswatch.com/slate/bootstrap.min.css" />');
 		$('head').append('<link rel="stylesheet" type="text/css" href="src/daterangepicker.slate.delta.css" />');
 	});
 	$('#remove-slate').click(function () {
@@ -12,7 +12,7 @@ $(function () {
 	});
 	$('#date-range0').dateRangePicker({}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
-		console.log('first-date-selected', obj);
+		console.log('range-start', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
@@ -75,14 +75,14 @@ $(function () {
 		console.log(obj);
 	});
 	$('#date-range101').dateRangePicker({
-		//startOfWeek : 'monday',
+		//startOfWeek : 1,
 		shortcuts : {
 			'next-days' : [3, 5, 7],
 			'next' : ['week', 'month', 'year']
 		}
 	});
 	$('#date-range102').dateRangePicker({
-		//startOfWeek : 'monday',
+		//startOfWeek : 1,
 		shortcuts : {
 			'prev-days' : [3, 5, 7],
 			'prev' : ['week', 'month', 'year']
@@ -92,7 +92,7 @@ $(function () {
 		autoClose : true
 	}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
-		console.log('first-date-selected', obj);
+		console.log('range-start', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
@@ -143,7 +143,7 @@ $(function () {
 		maxDays : 7
 	});
 	$('#date-range8').dateRangePicker({
-		startOfWeek : 'monday'
+		startOfWeek : 1
 	});
 	$('#date-range9').dateRangePicker({
 		getValue : function () {
@@ -179,7 +179,7 @@ $(function () {
 		singleDate : true
 	}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
-		console.log('first-date-selected', obj);
+		console.log('range-start', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
@@ -220,7 +220,7 @@ $(function () {
 		singleMonth : true
 	}).bind('DRPick-first-date', function (event, obj) {
 		/* This event will be triggered when first date is selected */
-		console.log('first-date-selected', obj);
+		console.log('range-start', obj);
 		// obj will be something like this:
 		// {
 		// 		date1: (Date object of the earlier date)
@@ -263,11 +263,13 @@ $(function () {
 	});
 	$('#date-range15').dateRangePicker({
 		beforeShowDay : function (t) {
-			var valid = !(t.getDay() == 0 || t.getDay() == 6); //disable saturday and sunday
-			var _class = '';
-			var _tooltip = valid ? '' : 'weekends are disabled';
-			// allow span across later half of month
+			//disable saturday and sunday
+			var valid = !(t.getDay() == 0 || t.getDay() == 6);
+			//allow skip disabled dates in later half of month (start/end at those dates is not allowed)
 			valid = valid || (t.getDate() > 15 ? null : valid);
+
+			var _class = '';
+			var _tooltip = valid ? '' : (valid === false ? 'Disabled' : 'Skipped');
 			return [valid, _class, _tooltip];
 		}
 	});
@@ -340,7 +342,7 @@ $(function () {
 	});
 	$('#date-range24-2').dateRangePicker({
 		showWeekNumbers : true,
-		startOfWeek : 'monday'
+		startOfWeek : 1
 	});
 	$('#date-range24-3').dateRangePicker({
 		showWeekNumbers : true,
@@ -358,9 +360,16 @@ $(function () {
 	});
 	$('#hotel-booking').dateRangePicker({
 		dateRange : {
-			start : new Date()
+			start : moment().subtract(15, 'hour').startOf('day').add(1, 'day').toDate()
 		},
 		selectForward : true,
+		showWeekNumbers : true,
+		showDateFilter : function (time, date) {
+			return '<div style="padding:0 5px;">' +
+			'<span style="font-weight:bold">' + date + '</span>' +
+			'<div style="opacity:0.3;">$' + Math.round(Math.random() * 999) + '</div>' +
+			'</div>';
+		},
 		beforeShowDay : function (t) {
 			var valid = !(t.getDay() == 0 || t.getDay() == 6); //disable saturday and sunday
 			var _class = '';

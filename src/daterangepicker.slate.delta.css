@@ -23,7 +23,7 @@
 {
 	background-color: transparent;
 }
-.date-picker-wrapper .month-wrapper table div:hover
+.date-picker-wrapper .month-wrapper table tbody td>div:hover
 {
 	background: #345;
 }
@@ -41,17 +41,31 @@
 	background-color: #258;
 }
 .date-picker-wrapper .month-wrapper table .day.invalid.hovering,
-.date-picker-wrapper .month-wrapper table .day.invalid.checked
+.date-picker-wrapper .month-wrapper table .day.invalid.checked,
+.date-picker-wrapper .month-wrapper table .day.unselectable.hovering,
+.date-picker-wrapper .month-wrapper table .day.unselectable.checked
 {
-	color: #222;
+	color: #A60 !important;
+	background-color: #420;
 }
-.date-picker-wrapper .time label
+.date-picker-wrapper .month-wrapper table .day.invalid.range-start,
+.date-picker-wrapper .month-wrapper table .day.invalid.range-end,
+.date-picker-wrapper .month-wrapper table .day.unselectable.range-start,
+.date-picker-wrapper .month-wrapper table .day.unselectable.range-end
 {
-	display: initial;
+	background-color: #620 !important;
 }
-.date-picker-wrapper .time input
+.date-picker-wrapper .month-wrapper table .day.skipped.hovering,
+.date-picker-wrapper .month-wrapper table .day.skipped.checked
 {
-	display: initial;
+	color: #359 !important;
+	background-color: #204080;
+}
+.date-picker-wrapper .month-wrapper table .invalid,
+.date-picker-wrapper .month-wrapper table .unselectable,
+.date-picker-wrapper .month-wrapper table .skipped
+{
+	color: #456 !important;
 }
 .date-picker-wrapper .month-wrapper table .day.toMonth.valid
 {
@@ -69,10 +83,38 @@
 {
 	background-color: #55F;
 }
+.date-picker-wrapper .month-wrapper table .day.real-today.invalid
+{
+	background-color: #226;
+}
 .date-picker-wrapper .month-wrapper table .day.real-today.checked,
 .date-picker-wrapper .month-wrapper table .day.real-today.hovering
 {
-	background-color: #77F;
+	background-color: #44C;
+}
+.date-picker-wrapper .month-wrapper table .day.real-today.invalid.checked,
+.date-picker-wrapper .month-wrapper table .day.real-today.invalid.hovering
+{
+	background-color: #426;
+}
+.date-picker-wrapper .month-wrapper table .range-start,
+.date-picker-wrapper .month-wrapper table .range-end
+{
+	background-color: #48A !important;
+}
+.date-picker-wrapper .month-wrapper table .week-number
+{
+	color: #38C;
+}
+.date-picker-wrapper .month-wrapper table .week-ranged
+{
+	color: #49E;
+	background: #456;
+}
+.date-picker-wrapper .month-wrapper table .week-ranged.invalid,
+.date-picker-wrapper .month-wrapper table .week-ranged.unselectable
+{
+	background: #433;
 }
 .date-picker-wrapper table .caption .next:hover,
 .date-picker-wrapper table .caption .prev:hover
@@ -116,14 +158,6 @@
 	background: #246;
 	box-shadow: inset -1px -2px 6px #69C;
 }
-.date-picker-wrapper .first-date-selected
-{
-	background-color: #48A !important;
-}
-.date-picker-wrapper .last-date-selected
-{
-	background-color: #48A !important;
-}
 .date-picker-wrapper .date-range-length-tip
 {
 	box-shadow: 0 0 8px #48C;
@@ -135,13 +169,4 @@
 .date-picker-wrapper .date-range-length-tip:after
 {
 	border-top: 4px solid #CFF;
-}
-.date-picker-wrapper .week-number
-{
-	color: #888;
-}
-.date-picker-wrapper .week-number.week-number-selected
-{
-	color: #49E;
-	background: #456;
 }
