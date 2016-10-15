@@ -230,7 +230,9 @@
 
 			function _init() {
 				// Initialize locale
-				state.fblocalizer = ResolveLocalizer(state.locale);
+				var localizer = ResolveLocalizer(state.locale)
+					var fblocale = localizer[0];
+				state.fblocalizer = localizer[1];
 
 				var locale = state.locale;
 				if (!opt.language) {
@@ -246,15 +248,16 @@
 				} else if (opt.language in $.DRPExLang) {
 					locale = opt.language;
 				}
-				var localizer = ResolveLocalizer(locale);
+				localizer = ResolveLocalizer(locale);
 				state.locale = localizer[0];
 				state.localizer = localizer[1];
 
 				var _locale = state.formatter.locale();
 				if (!state.formatter.locale(opt.language)._locale) {
 					if (!state.formatter.locale(state.locale)._locale)
-						if (!state.formatter.locale(locale)._locale)
-							state.formatter.locale(_locale);
+						if (!state.formatter.locale(fblocale)._locale)
+							if (!state.formatter.locale(locale)._locale)
+								state.formatter.locale(_locale);
 				}
 				state.monthFormat = state.formatter.localeData().longDateFormat('LL')
 					.replace(/Y(\s*)[^YMD]*D[^M]*/, 'Y$1')
@@ -623,7 +626,7 @@
 				return vals;
 			}
 			function applyDates(vals, silent) {
-				setDateRange(vals[0], vals.length > 1 ? vale[1] : vals[0], silent);
+				setDateRange(vals[0], vals.length > 1 ? vals[1] : vals[0], silent);
 			}
 			function checkAndSetDate() {
 				var Values = parseStringDates(opt.getValue.call(state.anchor[0]));
