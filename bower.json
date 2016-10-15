@@ -17,6 +17,7 @@
 	],
 	"main" : [
 		"./src/jquery.daterangepicker.js",
+		"./src/jquery.daterangepicker.lang.js",
 		"./src/daterangepicker.css",
 		"./src/daterangepicker.slate.css",
 		"./src/daterangepicker.slate.delta.css"
