@@ -236,8 +236,8 @@
 				if (!opt.language) {
 					var languages = navigator.languages || navigator.userLanguage ||
 						(navigator.language ? [navigator.language] : [navigator.browserLanguage]);
-					for (var lang in languages) {
-						lang = lang.toLowerCase();
+					for (var idx in languages) {
+						var lang = languages[idx].toLowerCase();
 						if (lang in $.DRPExLang) {
 							locale = lang;
 							break;
