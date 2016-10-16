@@ -1,164 +1,164 @@
-.date-picker-wrapper
+.dr-picker
 {
 	border: 1px solid #456;
 	background-color: #123;
 	box-shadow: 0 0 8px #036;
 	color: inherit;
 }
-.date-picker-wrapper b
+.dr-picker b
 {
 	color: #789;
 }
-.date-picker-wrapper a
+.dr-picker a
 {
 	color: #6AE;
 }
-.date-picker-wrapper .month-wrapper
+.dr-picker .month-wrapper
 {
 	border: 1px solid #567;
 	background-color: #234;
 	box-shadow: 0 0 16px rgba(160,192,255,0.3);
 }
-.date-picker-wrapper .month-wrapper table
+.dr-picker .month-wrapper table
 {
 	background-color: transparent;
 }
-.date-picker-wrapper .month-wrapper table tbody td>div:hover
+.dr-picker .month-wrapper table tbody td>div:hover
 {
 	background: #345;
 }
-.date-picker-wrapper .month-wrapper table .day
+.dr-picker .month-wrapper table .day
 {
 	color: #555;
 }
-.date-picker-wrapper .month-wrapper table div.day.lastMonth,
-.date-picker-wrapper .month-wrapper table div.day.nextMonth
+.dr-picker .month-wrapper table div.day.lastMonth,
+.dr-picker .month-wrapper table div.day.nextMonth
 {
 	color: #456;
 }
-.date-picker-wrapper .month-wrapper table .day.checked
+.dr-picker .month-wrapper table .day.checked
 {
 	background-color: #258;
 }
-.date-picker-wrapper .month-wrapper table .day.invalid.hovering,
-.date-picker-wrapper .month-wrapper table .day.invalid.checked,
-.date-picker-wrapper .month-wrapper table .day.unselectable.hovering,
-.date-picker-wrapper .month-wrapper table .day.unselectable.checked
+.dr-picker .month-wrapper table .day.invalid.hovering,
+.dr-picker .month-wrapper table .day.invalid.checked,
+.dr-picker .month-wrapper table .day.unselectable.hovering,
+.dr-picker .month-wrapper table .day.unselectable.checked
 {
 	color: #A60 !important;
 	background-color: #420;
 }
-.date-picker-wrapper .month-wrapper table .day.invalid.range-start,
-.date-picker-wrapper .month-wrapper table .day.invalid.range-end,
-.date-picker-wrapper .month-wrapper table .day.unselectable.range-start,
-.date-picker-wrapper .month-wrapper table .day.unselectable.range-end
+.dr-picker .month-wrapper table .day.invalid.range-start,
+.dr-picker .month-wrapper table .day.invalid.range-end,
+.dr-picker .month-wrapper table .day.unselectable.range-start,
+.dr-picker .month-wrapper table .day.unselectable.range-end
 {
 	background-color: #620 !important;
 }
-.date-picker-wrapper .month-wrapper table .day.skipped.hovering,
-.date-picker-wrapper .month-wrapper table .day.skipped.checked
+.dr-picker .month-wrapper table .day.skipped.hovering,
+.dr-picker .month-wrapper table .day.skipped.checked
 {
 	color: #359 !important;
 	background-color: #204080;
 }
-.date-picker-wrapper .month-wrapper table .invalid,
-.date-picker-wrapper .month-wrapper table .unselectable,
-.date-picker-wrapper .month-wrapper table .skipped
+.dr-picker .month-wrapper table .invalid,
+.dr-picker .month-wrapper table .unselectable,
+.dr-picker .month-wrapper table .skipped
 {
 	color: #456 !important;
 }
-.date-picker-wrapper .month-wrapper table .day.toMonth.valid
+.dr-picker .month-wrapper table .day.toMonth.valid
 {
 	color: #ACE;
 }
-.date-picker-wrapper .month-wrapper table .day.toMonth.hovering
+.dr-picker .month-wrapper table .day.toMonth.hovering
 {
 	background-color: #369;
 }
-.date-picker-wrapper .month-wrapper table .day.toMonth.valid.weekend
+.dr-picker .month-wrapper table .day.toMonth.valid.weekend
 {
 	color: #9DD;
 }
-.date-picker-wrapper .month-wrapper table .day.real-today
+.dr-picker .month-wrapper table .day.real-today
 {
 	background-color: #55F;
 }
-.date-picker-wrapper .month-wrapper table .day.real-today.invalid
+.dr-picker .month-wrapper table .day.real-today.invalid
 {
 	background-color: #226;
 }
-.date-picker-wrapper .month-wrapper table .day.real-today.checked,
-.date-picker-wrapper .month-wrapper table .day.real-today.hovering
+.dr-picker .month-wrapper table .day.real-today.checked,
+.dr-picker .month-wrapper table .day.real-today.hovering
 {
 	background-color: #44C;
 }
-.date-picker-wrapper .month-wrapper table .day.real-today.invalid.checked,
-.date-picker-wrapper .month-wrapper table .day.real-today.invalid.hovering
+.dr-picker .month-wrapper table .day.real-today.invalid.checked,
+.dr-picker .month-wrapper table .day.real-today.invalid.hovering
 {
 	background-color: #426;
 }
-.date-picker-wrapper .month-wrapper table .range-start,
-.date-picker-wrapper .month-wrapper table .range-end
+.dr-picker .month-wrapper table .range-start,
+.dr-picker .month-wrapper table .range-end
 {
 	background-color: #48A !important;
 }
-.date-picker-wrapper .month-wrapper table .week-number
+.dr-picker .month-wrapper table .week-number
 {
 	color: #38C;
 }
-.date-picker-wrapper .month-wrapper table .week-ranged
+.dr-picker .month-wrapper table .week-ranged
 {
 	color: #49E;
 	background: #456;
 }
-.date-picker-wrapper .month-wrapper table .week-ranged.invalid,
-.date-picker-wrapper .month-wrapper table .week-ranged.unselectable
+.dr-picker .month-wrapper table .week-ranged.invalid,
+.dr-picker .month-wrapper table .week-ranged.unselectable
 {
 	background: #433;
 }
-.date-picker-wrapper table .caption .next:hover,
-.date-picker-wrapper table .caption .prev:hover
+.dr-picker table .caption .next:hover,
+.dr-picker table .caption .prev:hover
 {
 	background-color: #6AE;
 	color: white;
 }
-.date-picker-wrapper .gap .gap-line .gap-1
+.dr-picker .gap .gap-line .gap-1
 {
 	border-left: 8px solid #234;
 	border-top: 8px solid #345;
 	border-bottom: 8px solid #345;
 }
-.date-picker-wrapper .gap .gap-line .gap-2
+.dr-picker .gap .gap-line .gap-2
 {
 	border-top: 8px solid #234;
 }
-.date-picker-wrapper .gap .gap-line .gap-3
+.dr-picker .gap .gap-line .gap-3
 {
 	border-bottom: 8px solid #234;
 }
-.date-picker-wrapper .gap .gap-top-mask
+.dr-picker .gap .gap-top-mask
 {
 	background-color: #345;
 }
-.date-picker-wrapper .gap .gap-bottom-mask
+.dr-picker .gap .gap-bottom-mask
 {
 	background-color: #345;
 }
-.date-picker-wrapper .drp_top-bar .apply-btn
+.dr-picker .top-bar .apply-btn
 {
 	border: solid 1px #058;
 	background: #09C;
 	box-shadow: inset -1px -2px 6px #049;
 	color: #DEF;
 }
-.date-picker-wrapper .drp_top-bar .apply-btn.disabled
+.dr-picker .top-bar .apply-btn.disabled
 {
 	color: #8AE;
 	border: solid 1px #456;
 	background: #246;
 	box-shadow: inset -1px -2px 6px #69C;
 }
-.date-picker-wrapper .date-range-length-tip
+.dr-picker .range-tip
 {
 	box-shadow: 0 0 8px #48C;
 	color: #249;
@@ -166,7 +166,7 @@
 	background-color: #CFF;
 	border-radius: 3px;
 }
-.date-picker-wrapper .date-range-length-tip:after
+.dr-picker .range-tip:after
 {
 	border-top: 4px solid #CFF;
 }

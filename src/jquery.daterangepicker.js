@@ -278,7 +278,7 @@
 				if (opt.startOfWeek === undefined)
 					opt.startOfWeek = (state.formatter.startOf('week').isoWeekday() === 7 ? 0 : 1);
 
-				state.wrapper = createDom();
+				state.wrapper = createDom($('.dr-picker').length);
 				(opt.container || $('body')).append(state.wrapper);
 
 				var defaultTopText;
@@ -334,14 +334,14 @@
 					weekNumberHovering($(this));
 				});
 				state.wrapper.delegate('.month-wrapper', 'mouseleave', function () {
-					state.wrapper.find('.date-range-length-tip').hide();
+					state.wrapper.find('.range-tip').hide();
 					clearHovering();
 				});
 				state.wrapper.find('.apply-btn').click(function () {
 					applyAndClose();
 				});
 				state.wrapper.find('[shortcut]').click(function () {
-					handleShortcut();
+					handleShortcut.call(this);
 				});
 			}
 
@@ -543,7 +543,21 @@
 
 					state.active = true;
 
+					// Temporarily toggle display style for accurate dimension calculations
+					state.wrapper.css({
+						display : 'block',
+						visibility : 0
+					});
 					checkAndSetDate();
+					updateCalendarWidth();
+					if (!opt.container) {
+						calcPosition();
+						$(window).bind('resize.DRPEx scroll.DRPEx', calcPosition);
+					}
+					state.wrapper.css({
+						display : 'none',
+						visibility : 'initial'
+					});
 
 					var afterAnim = function () {
 						state.anchor.trigger('DRPEx-opened', {
@@ -554,25 +568,6 @@
 						opt.customOpenAnimation.call(state.wrapper[0], afterAnim);
 					else
 						state.wrapper.slideDown(duration, afterAnim);
-
-					state.anchor.trigger('DRPEx-open', {
-						relatedTarget : state.wrapper
-					});
-
-					// Temporarily toggle display style for accurate dimension calculations
-					state.wrapper.css({
-						display : 'block',
-						visibility : 0
-					});
-					updateCalendarWidth();
-					if (!opt.container) {
-						calcPosition();
-						$(window).bind('resize.DRPEx scroll.DRPEx', calcPosition);
-					}
-					state.wrapper.css({
-						display : 'none',
-						visibility : 'initial'
-					});
 
 					if (opt.watchValueChange) {
 						var domChangeTimer = null;
@@ -587,6 +582,10 @@
 
 					if (!opt.alwaysOpen)
 						$(document).bind('click.DRPEx', defocusClick);
+
+					state.anchor.trigger('DRPEx-open', {
+						relatedTarget : state.wrapper
+					});
 					return true;
 				}
 				return false;
@@ -669,8 +668,8 @@
 				var w3 = state.wrapper.find('.month2').width();
 				var calendarWidth = w1 + w2 + w3 + 2;
 				state.wrapper.find('.month-wrapper').width(calendarWidth);
-				var w4 = state.wrapper.find('.drp_top-bar input').outerWidth();
-				state.wrapper.find('.drp_top-bar div').width(calendarWidth - w4 - 2);
+				var w4 = state.wrapper.find('.top-bar input').outerWidth();
+				state.wrapper.find('.top-bar div').width(calendarWidth - w4 - 2);
 			}
 
 			function clearSelection(silent) {
@@ -691,7 +690,7 @@
 
 			function clearHovering() {
 				state.wrapper.find('.day.hovering').removeClass('hovering');
-				state.wrapper.find('.date-range-length-tip').hide();
+				state.wrapper.find('.range-tip').hide();
 			}
 
 			function dayHovering(day) {
@@ -736,7 +735,7 @@
 					var _left = posDay.left - posBox.left;
 					var _top = posDay.top - posBox.top;
 					_left += day.width() / 2;
-					var $tip = state.wrapper.find('.date-range-length-tip');
+					var $tip = state.wrapper.find('.range-tip');
 					var w = $tip.css({
 							'visibility' : 'hidden',
 							'display' : 'none'
@@ -751,7 +750,7 @@
 						'visibility' : 'visible'
 					});
 				} else
-					state.wrapper.find('.date-range-length-tip').hide();
+					state.wrapper.find('.range-tip').hide();
 			}
 
 			function dayClicked(day) {
@@ -984,11 +983,11 @@
 						valid = undefined;
 				} else if (opt.maxDays && days > opt.maxDays) {
 					var msg = localize('less-than').replace('%d', opt.maxDays);
-					state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
+					state.wrapper.find('.top-bar .error-top').html(msg).attr('title', msg);
 					valid = false;
 				} else if (opt.minDays && days < opt.minDays) {
 					var msg = localize('more-than').replace('%d', opt.minDays);
-					state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
+					state.wrapper.find('.top-bar .error-top').html(msg).attr('title', msg);
 					valid = false;
 				} else {
 					if (isNaN(days))
@@ -997,11 +996,11 @@
 				if (valid) {
 					if (isDateOutOfBounds(state.selRange.start)) {
 						var msg = localize('range-start-bound');
-						state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
+						state.wrapper.find('.top-bar .error-top').html(msg).attr('title', msg);
 						valid = false;
 					} else if (isDateOutOfBounds(state.selRange.end)) {
 						var msg = localize('range-end-bound');
-						state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
+						state.wrapper.find('.top-bar .error-top').html(msg).attr('title', msg);
 						valid = false;
 					}
 				}
@@ -1034,24 +1033,24 @@
 					}
 					if (!valid) {
 						var msg = localize('batch-invalid').replace('%s', localize('batch-' + opt.batchMode));
-						state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
+						state.wrapper.find('.top-bar .error-top').html(msg).attr('title', msg);
 					}
 				}
 				if (valid) {
 					valid = isValidTime(state.selRange.end);
 					if (!valid) {
 						var msg = localize('disabled-range');
-						state.wrapper.find('.drp_top-bar .error-top').html(msg).attr('title', msg);
+						state.wrapper.find('.top-bar .error-top').html(msg).attr('title', msg);
 					}
 				}
 				if (valid) {
-					state.wrapper.find('.drp_top-bar').removeClass('error').addClass('normal');
+					state.wrapper.find('.top-bar').removeClass('error').addClass('normal');
 					state.wrapper.find('.apply-btn').removeClass('disabled').val(localize('apply-enabled'));
 				} else {
 					if (valid == undefined)
-						state.wrapper.find('.drp_top-bar').removeClass('error').addClass('normal');
+						state.wrapper.find('.top-bar').removeClass('error').addClass('normal');
 					else
-						state.wrapper.find('.drp_top-bar').addClass('error').removeClass('normal');
+						state.wrapper.find('.top-bar').addClass('error').removeClass('normal');
 					state.wrapper.find('.apply-btn').addClass('disabled').val(localize('apply-disabled'));
 				}
 				return valid;
@@ -1089,7 +1088,7 @@
 						state.anchor.trigger('DRPEx-change', {});
 				}
 
-				var normalmsg = state.wrapper.find('.drp_top-bar .normal-top');
+				var normalmsg = state.wrapper.find('.top-bar .normal-top');
 				normalmsg.attr('title', normalmsg.text());
 			}
 
@@ -1271,6 +1270,10 @@
 				var Ret = '<' + name;
 				if (attrs) {
 					$.each(attrs, function (attrKey, attrVal) {
+						if (attrVal.constructor == Array)
+							attrVal = attrVal.reduce(function (t, e) {
+									return (t || '') + (e ? ' ' + e : '');
+								});
 						Ret += ' ' + attrKey + '="' + attrVal + '"';
 					});
 					if (content !== undefined)
@@ -1279,16 +1282,17 @@
 				return Ret + '>';
 			}
 
-			function createDom() {
+			function createDom(index) {
 				var html =
 					tagGen('div', {
-						'class' : 'date-picker-wrapper'
-						 + (!opt.haveTopbar ? ' no-topbar ' : (opt.customTopBar ? ' custom-topbar' : ''))
-						 + (opt.inline ? ' inline-wrapper' : '')
+						'class' : ['dr-picker',
+							(!opt.haveTopbar ? 'no-topbar' : (opt.customTopBar ? 'custom-topbar' : '')),
+							(opt.inline ? 'inline' : '')],
+						id : 'date-picker-' + index
 					});
 				if (opt.haveTopbar) {
 					html += tagGen('div', {
-						'class' : 'drp_top-bar'
+						'class' : 'top-bar'
 					});
 					if (opt.customTopBar) {
 						html += tagGen('div', {
@@ -1329,10 +1333,9 @@
 					html += tagGen('input', {
 						type : 'button',
 						value : localize('apply-disabled'),
-						'class' : 'apply-btn'
-						 + ' disabled'
-						 + (opt.autoClose ? ' hide' : '')
-						 + (opt.applyBtnClass ? ' ' + opt.applyBtnClass : '')
+						'class' : ['apply-btn', 'disabled',
+							(opt.autoClose ? 'hide' : ''),
+							(opt.applyBtnClass ? opt.applyBtnClass : '')]
 					}, '');
 					html += tagGen('/div');
 				}
@@ -1366,9 +1369,9 @@
 				var tableGen = function (cls) {
 					var Ret = tagGen('table', {
 							'class' : cls,
-							cellspacing : '0',
-							border : '0',
-							cellpadding : '0'
+							cellspacing : 0,
+							border : 0,
+							cellpadding : 0
 						});
 					Ret += tagGen('thead')
 					 + tagGen('tr', {
@@ -1511,13 +1514,13 @@
 
 				var shortcutHTML = shortcutGen();
 				html += tagGen('div', {
-					'class' : 'shortcuts'
-					 + (shortcutHTML ? '' : ' none')
+					'class' : ['shortcuts',
+						(shortcutHTML ? '' : ' none')]
 				}, tagGen('b', {}, localize('shortcuts')) + shortcutHTML);
 
 				html += tagGen('/div');
 				html += tagGen('div', {
-					'class' : 'date-range-length-tip'
+					'class' : 'range-tip'
 				}, '');
 				html += tagGen('/div');
 				return $(html);

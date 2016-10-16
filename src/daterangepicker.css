@@ -2,7 +2,7 @@ body {
 	position: relative;
 	margin: 0;
 }
-.date-picker-wrapper
+.dr-picker
 {
 	font-size: 12px;
 	font-family: Arial, sans-serif;
@@ -16,41 +16,41 @@ body {
 	box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
 	display: none;
 }
-.date-picker-wrapper,
-.date-picker-wrapper *
+.dr-picker,
+.dr-picker *
 {
 	box-sizing: initial;
 }
-.date-picker-wrapper.inline-wrapper
+.dr-picker.inline
 {
 	position: relative;
 	box-shadow: none;
 	display: inline-block;
 }
-.date-picker-wrapper.no-topbar
+.dr-picker.no-topbar
 {
 	padding-top: 12px;
 }
-.date-picker-wrapper .footer
+.dr-picker .footer
 {
 	font-size: 11px;
 	padding-top: 3px;
 }
-.date-picker-wrapper b
+.dr-picker b
 {
 	color: #666;
 	font-weight: 700;
 }
-.date-picker-wrapper a
+.dr-picker a
 {
 	color: #6bb4d6;
 	text-decoration: underline;
 }
-.date-picker-wrapper .month-name
+.dr-picker .month-name
 {
 	text-transform: uppercase;
 }
-.date-picker-wrapper .month-wrapper
+.dr-picker .month-wrapper
 {
 	border: 1px solid #bfbfbf;
 	border-radius: 3px;
@@ -60,13 +60,13 @@ body {
 	position: relative;
 	_overflow: hidden;
 }
-.date-picker-wrapper .month-wrapper table
+.dr-picker .month-wrapper table
 {
 	width: 196px;
 	float: left;
 }
-.date-picker-wrapper .month-wrapper table th,
-.date-picker-wrapper .month-wrapper table td
+.dr-picker .month-wrapper table th,
+.dr-picker .month-wrapper table td
 {
 	vertical-align: middle;
 	text-align: center;
@@ -75,15 +75,15 @@ body {
 	margin: 0;
 	padding: 0;
 }
-.date-picker-wrapper .month-wrapper table th.button
+.dr-picker .month-wrapper table th.button
 {
 	width: 27px;
 }
-.date-picker-wrapper .month-wrapper table tbody td>div:hover
+.dr-picker .month-wrapper table tbody td>div:hover
 {
 	background: #EEE;
 }
-.date-picker-wrapper .month-wrapper table .day
+.dr-picker .month-wrapper table .day
 {
 	padding: 5px 0;
 	line-height: 1;
@@ -92,96 +92,96 @@ body {
 	color: #CCC;
 	cursor: default;
 }
-.date-picker-wrapper .month-wrapper table div.day.lastMonth,
-.date-picker-wrapper .month-wrapper table div.day.nextMonth
+.dr-picker .month-wrapper table div.day.lastMonth,
+.dr-picker .month-wrapper table div.day.nextMonth
 {
 	color: #DDD;
 	cursor: default;
 }
-.date-picker-wrapper .month-wrapper table .day.checked
+.dr-picker .month-wrapper table .day.checked
 {
 	background-color: #9cdbf7;
 }
-.date-picker-wrapper .month-wrapper table .day.invalid.hovering,
-.date-picker-wrapper .month-wrapper table .day.invalid.checked,
-.date-picker-wrapper .month-wrapper table .day.unselectable.hovering,
-.date-picker-wrapper .month-wrapper table .day.unselectable.checked
+.dr-picker .month-wrapper table .day.invalid.hovering,
+.dr-picker .month-wrapper table .day.invalid.checked,
+.dr-picker .month-wrapper table .day.unselectable.hovering,
+.dr-picker .month-wrapper table .day.unselectable.checked
 {
 	color: #900 !important;
 	background-color: #DA7;
 }
-.date-picker-wrapper .month-wrapper table .day.invalid.range-start,
-.date-picker-wrapper .month-wrapper table .day.invalid.range-end,
-.date-picker-wrapper .month-wrapper table .day.unselectable.range-start,
-.date-picker-wrapper .month-wrapper table .day.unselectable.range-end
+.dr-picker .month-wrapper table .day.invalid.range-start,
+.dr-picker .month-wrapper table .day.invalid.range-end,
+.dr-picker .month-wrapper table .day.unselectable.range-start,
+.dr-picker .month-wrapper table .day.unselectable.range-end
 {
 	background-color: #D73 !important;
 }
-.date-picker-wrapper .month-wrapper table .day.skipped.hovering,
-.date-picker-wrapper .month-wrapper table .day.skipped.checked
+.dr-picker .month-wrapper table .day.skipped.hovering,
+.dr-picker .month-wrapper table .day.skipped.checked
 {
 	color: #CCF !important;
 	background-color: #DEF;
 }
-.date-picker-wrapper .month-wrapper table .invalid,
-.date-picker-wrapper .month-wrapper table .unselectable,
-.date-picker-wrapper .month-wrapper table .skipped
+.dr-picker .month-wrapper table .invalid,
+.dr-picker .month-wrapper table .unselectable,
+.dr-picker .month-wrapper table .skipped
 {
 	color: #CCC !important;
 	cursor: default !important;
 }
-.date-picker-wrapper .month-wrapper table .invalid:hover,
-.date-picker-wrapper .month-wrapper table .unselectable:hover,
-.date-picker-wrapper .month-wrapper table .skipped:hover
+.dr-picker .month-wrapper table .invalid:hover,
+.dr-picker .month-wrapper table .unselectable:hover,
+.dr-picker .month-wrapper table .skipped:hover
 {
 	background: transparent;
 }
-.date-picker-wrapper .month-wrapper table .week-name
+.dr-picker .month-wrapper table .week-name
 {
 	height: 20px;
 	line-height: 20px;
 	font-weight: 100;
 	text-transform: uppercase;
 }
-.date-picker-wrapper .month-wrapper table .day.toMonth.valid
+.dr-picker .month-wrapper table .day.toMonth.valid
 {
 	color: #888;
 	cursor: pointer;
 }
-.date-picker-wrapper .month-wrapper table .day.toMonth.hovering
+.dr-picker .month-wrapper table .day.toMonth.hovering
 {
 	background-color: #cdecfa;
 }
-.date-picker-wrapper .month-wrapper table .day.toMonth.valid.weekend
+.dr-picker .month-wrapper table .day.toMonth.valid.weekend
 {
 	color: #D99;
 }
-.date-picker-wrapper .month-wrapper table .day.nextMonth,
-.date-picker-wrapper .month-wrapper table .day.lastMonth
+.dr-picker .month-wrapper table .day.nextMonth,
+.dr-picker .month-wrapper table .day.lastMonth
 {
 	display: none;
 }
-.date-picker-wrapper .month-wrapper table .day.real-today
+.dr-picker .month-wrapper table .day.real-today
 {
 	background-color: #ffe684;
 }
-.date-picker-wrapper .month-wrapper table .day.real-today.checked,
-.date-picker-wrapper .month-wrapper table .day.real-today.hovering
+.dr-picker .month-wrapper table .day.real-today.checked,
+.dr-picker .month-wrapper table .day.real-today.hovering
 {
 	background-color: #4AC;
 }
-.date-picker-wrapper .month-wrapper table .day.real-today.invalid.checked,
-.date-picker-wrapper .month-wrapper table .day.real-today.invalid.hovering
+.dr-picker .month-wrapper table .day.real-today.invalid.checked,
+.dr-picker .month-wrapper table .day.real-today.invalid.hovering
 {
 	background-color: #A75;
 }
-.date-picker-wrapper .month-wrapper table .range-start,
-.date-picker-wrapper .month-wrapper table .range-end
+.dr-picker .month-wrapper table .range-start,
+.dr-picker .month-wrapper table .range-end
 {
 	background-color: #49e !important;
 	color: white !important;
 }
-.date-picker-wrapper .month-wrapper table .week-number
+.dr-picker .month-wrapper table .week-number
 {
 	padding: 5px 0;
 	line-height: 1;
@@ -190,35 +190,35 @@ body {
 	color: #999;
 	cursor: pointer;
 }
-.date-picker-wrapper .month-wrapper table .week-ranged
+.dr-picker .month-wrapper table .week-ranged
 {
 	color: #4499EE;
 	font-weight: bold;
 	background: #DEF;
 }
-.date-picker-wrapper .month-wrapper table .week-ranged.invalid,
-.date-picker-wrapper .month-wrapper table .week-ranged.unselectable
+.dr-picker .month-wrapper table .week-ranged.invalid,
+.dr-picker .month-wrapper table .week-ranged.unselectable
 {
 	color: #C66 !important;
 	background: #FCA;
 }
-.date-picker-wrapper table .caption
+.dr-picker table .caption
 {
 	height: 40px;
 }
-.date-picker-wrapper table .caption .next,
-.date-picker-wrapper table .caption .prev
+.dr-picker table .caption .next,
+.dr-picker table .caption .prev
 {
 	padding: 0 5px;
 	cursor: pointer;
 }
-.date-picker-wrapper table .caption .next:hover,
-.date-picker-wrapper table .caption .prev:hover
+.dr-picker table .caption .next:hover,
+.dr-picker table .caption .prev:hover
 {
 	background-color: #ccc;
 	color: white;
 }
-.date-picker-wrapper .gap
+.dr-picker .gap
 {
 	position: relative;
 	z-index: 1;
@@ -232,16 +232,16 @@ body {
 	visibility: hidden;
 	height: 0;
 }
-.date-picker-wrapper .gap .gap-lines
+.dr-picker .gap .gap-lines
 {
 	height: 100%;
 	overflow: hidden;
 }
-.date-picker-wrapper .gap .gap-line
+.dr-picker .gap .gap-line
 {
 	position: relative;
 }
-.date-picker-wrapper .gap .gap-line .gap-1
+.dr-picker .gap .gap-line .gap-1
 {
 	z-index: 1;
 	height: 0;
@@ -249,7 +249,7 @@ body {
 	border-top: 8px solid #eee;
 	border-bottom: 8px solid #eee;
 }
-.date-picker-wrapper .gap .gap-line .gap-2
+.dr-picker .gap .gap-line .gap-2
 {
 	position: absolute;
 	right: 0;
@@ -259,7 +259,7 @@ body {
 	border-left: 8px solid transparent;
 	border-top: 8px solid white;
 }
-.date-picker-wrapper .gap .gap-line .gap-3
+.dr-picker .gap .gap-line .gap-3
 {
 	position: absolute;
 	right: 0;
@@ -269,7 +269,7 @@ body {
 	border-left: 8px solid transparent;
 	border-bottom: 8px solid white;
 }
-.date-picker-wrapper .gap .gap-top-mask
+.dr-picker .gap .gap-top-mask
 {
 	width: 8px;
 	height: 1px;
@@ -279,7 +279,7 @@ body {
 	background-color: #eee;
 	z-index: 3;
 }
-.date-picker-wrapper .gap .gap-bottom-mask
+.dr-picker .gap .gap-bottom-mask
 {
 	width: 8px;
 	height: 1px;
@@ -289,58 +289,58 @@ body {
 	background-color: #eee;
 	z-index: 3;
 }
-.date-picker-wrapper .spacer
+.dr-picker .spacer
 {
 	clear: both;
 	height: 0;
 	font-size: 0;
 }
-.date-picker-wrapper .selected-days
+.dr-picker .selected-days
 {
 	display: none;
 }
-.date-picker-wrapper .drp_top-bar
+.dr-picker .top-bar
 {
 	line-height: 1.4;
 	position: relative;
 	padding: 10px 40px 10px 0;
 }
-.date-picker-wrapper .drp_top-bar div
+.dr-picker .top-bar div
 {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.date-picker-wrapper .drp_top-bar .error-top
+.dr-picker .top-bar .error-top
 {
 	display: none;
 }
-.date-picker-wrapper .drp_top-bar .normal-top
+.dr-picker .top-bar .normal-top
 {
 	display: none;
 }
-.date-picker-wrapper .drp_top-bar .default-top
+.dr-picker .top-bar .default-top
 {
 	display: block;
 }
-.date-picker-wrapper .drp_top-bar.error .default-top
+.dr-picker .top-bar.error .default-top
 {
 	display: none;
 }
-.date-picker-wrapper .drp_top-bar.error .error-top
+.dr-picker .top-bar.error .error-top
 {
 	display: block;
 	color: red;
 }
-.date-picker-wrapper .drp_top-bar.normal .default-top
+.dr-picker .top-bar.normal .default-top
 {
 	display: none;
 }
-.date-picker-wrapper .drp_top-bar.normal .normal-top
+.dr-picker .top-bar.normal .normal-top
 {
 	display: block;
 }
-.date-picker-wrapper .drp_top-bar .apply-btn
+.dr-picker .top-bar .apply-btn
 {
 	position: absolute;
 	right: 0;
@@ -356,18 +356,18 @@ body {
 	color: white;
 	line-height: initial;
 }
-.date-picker-wrapper .drp_top-bar .apply-btn.disabled
+.dr-picker .top-bar .apply-btn.disabled
 {
 	color: #606060;
 	border: solid 1px #b7b7b7;
 	background: white;
 	box-shadow: inset -1px -2px 6px #DDD;
 }
-.date-picker-wrapper .hide
+.dr-picker .hide
 {
 	display: none;
 }
-.date-picker-wrapper .date-range-length-tip
+.dr-picker .range-tip
 {
 	position: absolute;
 	margin-top: -4px;
@@ -380,7 +380,7 @@ body {
 	font-size: 12px;
 	line-height: 16px;
 }
-.date-picker-wrapper .date-range-length-tip:after
+.dr-picker .range-tip:after
 {
 	content: '';
 	position: absolute;
@@ -391,28 +391,28 @@ body {
 	margin-left: -4px;
 	bottom: -4px;
 }
-.date-picker-wrapper.two-months.no-gap .month1 .next,
-.date-picker-wrapper.two-months.no-gap .month2 .prev
+.dr-picker.two-months.no-gap .month1 .next,
+.dr-picker.two-months.no-gap .month2 .prev
 {
 	display: none;
 }
-.date-picker-wrapper div.shortcuts {
+.dr-picker div.shortcuts {
 	white-space: nowrap;
 	overflow: hidden;
 }
-.date-picker-wrapper div.shortcuts.none
+.dr-picker div.shortcuts.none
 {
 	opacity: 0;
 	height: 6px;
 }
-.date-picker-wrapper div.shortcuts span {
+.dr-picker div.shortcuts span {
 	margin-left: 0.25em;
 }
-.date-picker-wrapper div.shortcuts span.shortcut {
+.dr-picker div.shortcuts span.shortcut {
 	color: #48C;
 	text-decoration: underline;
 	cursor: pointer;
 }
-.date-picker-wrapper div.shortcuts span.shortcut:hover {
+.dr-picker div.shortcuts span.shortcut:hover {
 	color: #C8F;
 }
