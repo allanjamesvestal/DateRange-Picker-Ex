@@ -1,8 +1,8 @@
-## DateRange-Picker-Ex
+# DateRange-Picker-Ex
 [![GitHub issues](https://img.shields.io/github/issues/Adam5Wu/DateRange-Picker-Ex.svg)](https://github.com/Adam5Wu/DateRange-Picker-Ex/issues)
 [![GitHub forks](https://img.shields.io/github/forks/Adam5Wu/DateRange-Picker-Ex.svg)](https://github.com/Adam5Wu/DateRange-Picker-Ex/network)
-[![License](https://img.shields.io/github/license/Adam5Wu/DateRange-Picker-Ex.svg)](./LICENSE.txt)
-![Bower version](https://img.shields.io/bower/v/daterange-picker-ex.svg?maxAge=3600)
+[![License](https://img.shields.io/github/license/Adam5Wu/DateRange-Picker-Ex.svg)](./LICENSE)
+[![Bower version](https://img.shields.io/bower/v/daterange-picker-ex.svg?maxAge=3600)](https://bower.io/search/)
 
 DateRange-Picker-Ex is a jQuery plugin that allows user to select a date range.
 
