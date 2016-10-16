@@ -56,14 +56,18 @@
 					'default-more' : 'Please select a date range longer than %d days',
 					'default-single' : 'Please select a date',
 					'default-less' : 'Please select a date range less than %d days',
-					'default-range' : 'Please select a date range between %d and %d days',
+					'default-range' : 'Please select a date range between {minDays} and {maxDays} days',
 					'default-default' : 'Please select a date range'
 				}
 			}, $.DRPExLang);
 
 		$.fn.dateRangePicker = function (opt) {
 			opt = $.extend({
+					autoStart : false,
 					autoClose : false,
+					alwaysOpen : false,
+					dropTrigger : true,
+					watchValueChange : true,
 					format : 'YYYY-MM-DD',
 					separator : ' to ',
 					language : undefined,
@@ -88,10 +92,7 @@
 						//'next' : ['week','month','year'],
 						//'custom' : { 'name': function(daytime){} }
 					},
-					watchValueChange : true,
 					container : undefined,
-					alwaysOpen : false,
-					dropTrigger : true,
 					singleDate : false,
 					lookBehind : false,
 					batchMode : false,
@@ -126,35 +127,29 @@
 				opt.dateRange.start = moment(opt.dateRange.start, opt.format).toDate();
 			if (opt.dateRange.end && opt.dateRange.end.constructor == String)
 				opt.dateRange.end = moment(opt.dateRange.end, opt.format).toDate();
+			if (opt.alwaysOpen)
+				opt.dropTrigger = false;
 			RangeReverseCheck(opt.dateRange);
 
 			var state = {
-				selRange : {
-					start : false,
-					end : false
-				},
-				selWeek : false,
-				active : false,
+				anchor : $(this),
+				wrapper : undefined,
+
 				locale : 'default',
 				localizer : {},
 				fblocalizer : {},
 				formatter : moment(),
 				monthFormat : '??',
-				anchor : $(this),
-				wrapper : undefined
+
+				selRange : {
+					start : false,
+					end : false
+				},
+				selWeek : false,
+				active : false
 			};
 
-			if (opt.dropTrigger) {
-				state.anchor.bind('click.DRPEx', function (evt) {
-					if (!state.active) {
-						openDatePicker(opt.animationTime);
-					}
-				});
-			}
-			if (opt.alwaysOpen)
-				openDatePicker(0);
-
-			// expose some api
+			// Public APIs
 			state.anchor.data('DRPEx', {
 				open : function (duration) {
 					statusCheck();
@@ -221,21 +216,32 @@
 				},
 				destroy : function () {
 					statusCheck();
-					state.anchor.unbind('.DRPEx');
-					state.anchor.data('DRPEx', undefined);
+
 					if (state.wrapper)
 						state.wrapper.remove();
 					state.wrapper = null;
+
+					state.anchor.unbind('.DRPEx');
+					state.anchor.data('DRPEx', undefined);
+
 					$(window).unbind('resize.DRPEx scroll.DRPEx', calcPosition);
 					$(document).unbind('click.DRPEx', defocusClick);
 				}
 			});
+
+			if (opt.dropTrigger) {
+				state.anchor.bind('click.DRPEx', function (evt) {
+					openDatePicker(opt.animationTime);
+				});
+			}
+			if (opt.alwaysOpen || opt.autoStart)
+				setTimeout(openDatePicker.bind(this, opt.alwaysOpen ? 0 : opt.animationTime), 0);
 			return this;
 
 			function _init() {
 				// Initialize locale
-				var localizer = ResolveLocalizer(state.locale)
-					var fblocale = localizer[0];
+				var localizer = ResolveLocalizer(state.locale);
+				var fblocale = localizer[0];
 				state.fblocalizer = localizer[1];
 
 				var locale = state.locale;
@@ -249,9 +255,9 @@
 							break;
 						}
 					}
-				} else if (opt.language in $.DRPExLang) {
+				} else if (opt.language in $.DRPExLang)
 					locale = opt.language;
-				}
+
 				localizer = ResolveLocalizer(locale);
 				state.locale = localizer[0];
 				state.localizer = localizer[1];
@@ -274,76 +280,47 @@
 
 				state.wrapper = createDom();
 				(opt.container || $('body')).append(state.wrapper);
-				state.wrapper.delegate('.day', 'mouseleave', function () {
-					state.wrapper.find('.date-range-length-tip').hide();
-					clearHovering();
-				});
-				var defaultTopText = '';
+
+				var defaultTopText;
 				if (opt.singleDate)
 					defaultTopText = localize('default-single');
 				else if (opt.minDays && opt.maxDays)
-					defaultTopText = localize('default-range');
+					defaultTopText = localize('default-range')
+						.replace(/\{minDays\}/, opt.minDays).replace(/\{maxDays\}/, opt.maxDays);
 				else if (opt.minDays)
-					defaultTopText = localize('default-more');
+					defaultTopText = localize('default-more')
+						.replace(/\%d/, opt.minDays);
 				else if (opt.maxDays)
-					defaultTopText = localize('default-less');
+					defaultTopText = localize('default-less')
+						.replace(/\%d/, opt.maxDays);
 				else
 					defaultTopText = localize('default-default');
-				var msg = defaultTopText.replace(/\%d/, opt.minDays).replace(/\%d/, opt.maxDays);
-				state.wrapper.find('.default-top').html(msg).attr('title', msg);
-				if (opt.singleMonth) {
+				state.wrapper.find('.default-top').html(defaultTopText).attr('title', defaultTopText);
+
+				if (opt.singleMonth)
 					state.wrapper.addClass('single-month');
-				} else {
+				else
 					state.wrapper.addClass('two-months');
-				}
+
+				state.wrapper.attr('unselectable', 'on')
+				.css('user-select', 'none')
+				.bind('selectstart', function (e) {
+					e.preventDefault();
+					return false;
+				});
+
 				state.wrapper.find('.next').click(function () {
 					if (!opt.stickyMonths)
 						gotoNextMonth($(this));
 					else
 						gotoNextMonth_stickily($(this));
 				});
-				function gotoNextMonth(btn) {
-					var isMonth2 = btn.parents('table').hasClass('month2');
-					var month = nextMonth(isMonth2 ? state.month2 : state.month1);
-					if (!opt.singleMonth && !isMonth2 && compareMonth(month, state.month2) >= 0)
-						return;
-					if (isDateOutOfBounds(month))
-						return;
-					showMonth(month, isMonth2 ? 'month2' : 'month1');
-					showGap();
-				}
-				function gotoNextMonth_stickily() {
-					var nextMonth1 = nextMonth(state.month1);
-					var nextMonth2 = nextMonth(state.month2);
-					if (isDateOutOfBounds(nextMonth2))
-						return;
-					showMonth(nextMonth1, 'month1');
-					showMonth(nextMonth2, 'month2');
-				}
 				state.wrapper.find('.prev').click(function () {
 					if (!opt.stickyMonths)
 						gotoPrevMonth($(this));
 					else
 						gotoPrevMonth_stickily($(this));
 				});
-				function gotoPrevMonth(btn) {
-					var isMonth2 = btn.parents('table').hasClass('month2');
-					var month = prevMonth(isMonth2 ? state.month2 : state.month1);
-					if (isMonth2 && compareMonth(month, state.month1) <= 0)
-						return;
-					if (isDateOutOfBounds(moment(month).endOf('month').startOf('day').toDate()))
-						return;
-					showMonth(month, isMonth2 ? 'month2' : 'month1');
-					showGap();
-				}
-				function gotoPrevMonth_stickily() {
-					var prevMonth1 = prevMonth(state.month1);
-					var prevMonth2 = prevMonth(state.month2);
-					if (isDateOutOfBounds(moment(prevMonth1).endOf('month').startOf('day').toDate()))
-						return;
-					showMonth(prevMonth2, 'month2');
-					showMonth(prevMonth1, 'month1');
-				}
 				state.wrapper.delegate('.day', 'click', function (evt) {
 					dayClicked($(this));
 				});
@@ -356,80 +333,18 @@
 				state.wrapper.delegate('.week-number', 'mouseenter', function (evt) {
 					weekNumberHovering($(this));
 				});
-				state.wrapper.attr('unselectable', 'on')
-				.css('user-select', 'none')
-				.bind('selectstart', function (e) {
-					e.preventDefault();
-					return false;
+				state.wrapper.delegate('.month-wrapper', 'mouseleave', function () {
+					state.wrapper.find('.date-range-length-tip').hide();
+					clearHovering();
 				});
 				state.wrapper.find('.apply-btn').click(function () {
 					applyAndClose();
 				});
 				state.wrapper.find('[shortcut]').click(function () {
-					var shortcut = $(this).attr('shortcut');
-					var now = moment().startOf('day');
-					var startDate;
-					var endDate;
-					var dir;
-					if (shortcut.indexOf('day') != -1) {
-						var day = parseInt(shortcut.split(',', 2)[1]);
-						if (day == 0) {
-							clearSelection();
-							resetMonthsView();
-						} else {
-							startDate = now.clone().add(day > 0 ? 1 : -1, 'day').toDate();
-							endDate = now.add(day, 'day').toDate();
-						}
-					} else if (shortcut.indexOf('week') != -1) {
-						var dir = shortcut.indexOf('prev,') == -1;
-						if (dir) {
-							startDate = now.day(opt.startOfWeek ? 8 : 7).toDate();
-						} else {
-							startDate = now.day(opt.startOfWeek ? -6 : -7).toDate();
-						}
-						endDate = now.clone().day(opt.startOfWeek ? 7 : 6).toDate();
-					} else if (shortcut.indexOf('month') != -1) {
-						var dir = shortcut.indexOf('prev,') == -1;
-						if (dir) {
-							startDate = now.add(1, 'month').date(1).toDate();
-						} else {
-							startDate = now.subtract(1, 'month').date(1).toDate();
-						}
-						endDate = now.clone().endOf('month').startOf('day').toDate();
-					} else if (shortcut.indexOf('year') != -1) {
-						var dir = shortcut.indexOf('prev,') == -1;
-						if (dir) {
-							startDate = now.add(1, 'year').month(0).date(1).toDate();
-						} else {
-							startDate = now.subtract(1, 'year').month(0).date(1).toDate();
-						}
-						endDate = now.clone().endOf('year').startOf('day').toDate();
-					} else if (shortcut == 'custom') {
-						var name = $(this).text();
-						var sh = opt.shortcuts.custom[name];
-						var data = typeof sh === 'function' ? sh(now) : sh;
-						if (data && data.length == 2) {
-							startDate = data[0];
-							endDate = data[1];
-						}
-						// if only one date is specified then just move calendars there
-						// move calendars to show this date's month and next months
-						if (data && data.length == 1) {
-							var movetodate = data[0];
-							showMonth(movetodate, 'month1');
-							showGap();
-						}
-					}
-					if (startDate && endDate) {
-						setDateRange(startDate, endDate);
-					}
+					handleShortcut();
 				});
-
-				if (!opt.alwaysOpen) {
-					//if user click other place of the webpage, close date range picker window
-					$(document).bind('click.DRPEx', defocusClick);
-				}
 			}
+
 			function statusCheck(initialized) {
 				if (!state.wrapper) {
 					if (state.wrapper !== undefined)
@@ -438,6 +353,7 @@
 						throw new Error('Not yet initialized');
 				}
 			}
+
 			function ResolveLocalizer(locale) {
 				var localizer = $.DRPExLang[locale];
 				// Resolve aliases
@@ -447,9 +363,11 @@
 				}
 				return [locale, localizer];
 			}
+
 			function localize(t) {
 				return state.localizer[t] || state.fblocalizer[t] || '??';
 			}
+
 			function RangeReverseCheck(range) {
 				if (range.start && range.end) {
 					if (moment(range.start).isAfter(moment(range.end))) {
@@ -461,124 +379,219 @@
 				}
 				return false;
 			}
-			function IsClickContained(evt, container) {
+
+			function clickContained(evt, container) {
 				return container.contains(evt.target) || evt.target == container;
-				//(container.childNodes != undefined && $.inArray(evt.target, container.childNodes) >= 0);
 			}
+
 			function defocusClick(evt) {
-				if (!IsClickContained(evt, state.anchor[0]) && !IsClickContained(evt, state.wrapper[0])) {
-					if (state.active) {
-						closeDatePicker(opt.animationTime);
-					}
-				}
+				if (!clickContained(evt, state.anchor[0]) && !clickContained(evt, state.wrapper[0]))
+					closeDatePicker(opt.animationTime);
+
 			}
-			function calcPosition() {
-				if (state.active) {
-					var anchorO = state.anchor.offset();
-					var anchorW = state.anchor.outerWidth();
-					var anchorH = state.anchor.outerHeight();
-					anchorO['right'] = anchorO.left + anchorW;
-					anchorO['bottom'] = anchorO.top + anchorH;
-					var continerO = state.wrapper.offset();
-					var continerW = state.wrapper.outerWidth();
-					var continerH = state.wrapper.outerHeight();
-					continerO['right'] = continerO.left + continerW;
-					continerO['bottom'] = continerO.top + continerH;
-					var vpO = {
-						top : $(window).scrollTop(),
-						left : $(window).scrollLeft()
-					};
-					var vpW = $(window).width();
-					var vpH = $(window).height();
-					vpO['right'] = vpO.left + vpW;
-					vpO['bottom'] = vpO.top + vpH;
 
-					if ((continerO.left >= vpO.left && continerO.right <= vpO.right) &&
-						(continerO.top >= vpO.top && continerO.bottom <= vpO.bottom) &&
-						(continerO.left == anchorO.left && (continerO.top == anchorO.bottom || state.wrapper.bottom == anchorO.top)))
-						return false;
+			function gotoNextMonth(btn) {
+				var isMonth2 = btn.parents('table').hasClass('month2');
+				var month = nextMonth(isMonth2 ? state.month2 : state.month1);
+				if (!opt.singleMonth && !isMonth2 && compareMonth(month, state.month2) >= 0)
+					return;
+				if (isDateOutOfBounds(month))
+					return;
+				showMonth(month, isMonth2 ? 'month2' : 'month1');
+				showGap();
+			}
 
-					var newLeft = (anchorO.left + continerW <= vpO.right ?
-						Math.max(anchorO.left, vpO.left) : Math.max(vpO.left, vpO.right - continerW));
+			function gotoNextMonth_stickily() {
+				var nextMonth1 = nextMonth(state.month1);
+				var nextMonth2 = nextMonth(state.month2);
+				if (isDateOutOfBounds(nextMonth2))
+					return;
+				showMonth(nextMonth1, 'month1');
+				showMonth(nextMonth2, 'month2');
+			}
 
-					var DropDown = (anchorO.bottom + continerH <= vpO.bottom || anchorO.top - continerH < vpO.top);
-					var VDist;
-					if (DropDown) {
-						var newTop = Math.max(anchorO.bottom, vpO.top);
-						state.wrapper.css({
-							top : newTop,
-							bottom : 'auto',
-							left : newLeft
-						});
-						VDist = newTop - anchorO.bottom;
+			function gotoPrevMonth(btn) {
+				var isMonth2 = btn.parents('table').hasClass('month2');
+				var month = prevMonth(isMonth2 ? state.month2 : state.month1);
+				if (isMonth2 && compareMonth(month, state.month1) <= 0)
+					return;
+				if (isDateOutOfBounds(moment(month).endOf('month').startOf('day').toDate()))
+					return;
+				showMonth(month, isMonth2 ? 'month2' : 'month1');
+				showGap();
+			}
+
+			function gotoPrevMonth_stickily() {
+				var prevMonth1 = prevMonth(state.month1);
+				var prevMonth2 = prevMonth(state.month2);
+				if (isDateOutOfBounds(moment(prevMonth1).endOf('month').startOf('day').toDate()))
+					return;
+				showMonth(prevMonth2, 'month2');
+				showMonth(prevMonth1, 'month1');
+			}
+
+			function handleShortcut() {
+				var shortcut = $(this).attr('shortcut');
+				var now = moment().startOf('day');
+				var startDate;
+				var endDate;
+				var dir;
+				if (shortcut.indexOf('day') != -1) {
+					var day = parseInt(shortcut.split(',', 2)[1]);
+					if (day == 0) {
+						clearSelection();
+						resetMonthsView();
 					} else {
-						var bodyH = $('body').outerHeight();
-						var newBotTop = Math.min(anchorO.top, vpO.bottom);
-						state.wrapper.css({
-							top : 'auto',
-							bottom : bodyH - newBotTop,
-							left : newLeft
-						});
-						VDist = anchorO.top - newBotTop;
+						startDate = now.clone().add(day > 0 ? 1 : -1, 'day').toDate();
+						endDate = now.add(day, 'day').toDate();
 					}
-					state.wrapper.css({
-						opacity : 0.3 + 0.7 / Math.log2(2 + (VDist >> 7))
-					});
-					return true;
+				} else if (shortcut.indexOf('week') != -1) {
+					var dir = shortcut.indexOf('prev,') == -1;
+					startDate = dir ? now.day(opt.startOfWeek ? 8 : 7).toDate() :
+						now.day(opt.startOfWeek ? -6 : -7).toDate();
+					endDate = now.clone().day(opt.startOfWeek ? 7 : 6).toDate();
+				} else if (shortcut.indexOf('month') != -1) {
+					var dir = shortcut.indexOf('prev,') == -1;
+					startDate = dir ? now.add(1, 'month').date(1).toDate() :
+						now.subtract(1, 'month').date(1).toDate();
+					endDate = now.clone().endOf('month').startOf('day').toDate();
+				} else if (shortcut.indexOf('year') != -1) {
+					var dir = shortcut.indexOf('prev,') == -1;
+					startDate = dir ? now.add(1, 'year').month(0).date(1).toDate() :
+						startDate = now.subtract(1, 'year').month(0).date(1).toDate();
+					endDate = now.clone().endOf('year').startOf('day').toDate();
+				} else if (shortcut == 'custom') {
+					var name = $(this).text();
+					var sh = opt.shortcuts.custom[name];
+					var data = typeof sh === 'function' ? sh(now) : sh;
+					if (data && data.length == 2) {
+						startDate = data[0];
+						endDate = data[1];
+					}
+					// if only one date is specified then just move calendars there
+					// move calendars to show this date's month and next months
+					if (data && data.length == 1) {
+						var movetodate = data[0];
+						showMonth(movetodate, 'month1');
+						showGap();
+					}
+				}
+				if (startDate && endDate) {
+					setDateRange(startDate, endDate);
 				}
 			}
+
+			function calcPosition() {
+				var anchorO = state.anchor.offset();
+				var anchorW = state.anchor.outerWidth();
+				var anchorH = state.anchor.outerHeight();
+				anchorO['right'] = anchorO.left + anchorW;
+				anchorO['bottom'] = anchorO.top + anchorH;
+				var containerO = state.wrapper.offset();
+				var containerW = state.wrapper.outerWidth();
+				var containerH = state.wrapper.outerHeight();
+				containerO['right'] = containerO.left + containerW;
+				containerO['bottom'] = containerO.top + containerH;
+				var vpO = {
+					top : $(window).scrollTop(),
+					left : $(window).scrollLeft()
+				};
+				var vpW = $(window).width();
+				var vpH = $(window).height();
+				vpO['right'] = vpO.left + vpW;
+				vpO['bottom'] = vpO.top + vpH;
+
+				if ((containerO.left >= vpO.left && containerO.right <= vpO.right) &&
+					(containerO.top >= vpO.top && containerO.bottom <= vpO.bottom) &&
+					(containerO.left == anchorO.left &&
+						(containerO.top == anchorO.bottom || containerO.bottom == anchorO.top)))
+					return false;
+
+				var newLeft = (anchorO.left + containerW <= vpO.right ?
+					Math.max(anchorO.left, vpO.left) : Math.max(vpO.left, vpO.right - containerW));
+
+				var DropDown = (anchorO.bottom + containerH <= vpO.bottom || anchorO.top - containerH < vpO.top);
+				var VDist;
+				if (DropDown) {
+					var newTop = Math.max(anchorO.bottom, vpO.top);
+					state.wrapper.css({
+						top : newTop,
+						bottom : 'auto',
+						left : newLeft
+					});
+					VDist = newTop - anchorO.bottom;
+				} else {
+					var bodyH = $('body').outerHeight();
+					var newBotTop = Math.min(anchorO.top, vpO.bottom);
+					state.wrapper.css({
+						top : 'auto',
+						bottom : bodyH - newBotTop,
+						left : newLeft
+					});
+					VDist = anchorO.top - newBotTop;
+				}
+				state.wrapper.css({
+					opacity : 0.3 + 0.7 / Math.log2(2 + (VDist >> 7))
+				});
+				return true;
+			}
+
 			function openDatePicker(duration) {
 				if (!state.active) {
 					if (!state.wrapper)
 						_init();
 
 					state.active = true;
-					// Temporarily toggle display style for accurate dimension calculations
-					state.wrapper.css({
-						display : 'block',
-						visibility : 0
-					});
+
 					checkAndSetDate();
-					updateCalendarWidth();
-					if (!opt.container) {
-						calcPosition();
-					}
-					state.wrapper.css({
-						display : 'none',
-						visibility : 'initial'
-					});
 
 					var afterAnim = function () {
 						state.anchor.trigger('DRPEx-opened', {
 							relatedTarget : state.wrapper
 						});
 					};
-					if (opt.customOpenAnimation) {
+					if (opt.customOpenAnimation)
 						opt.customOpenAnimation.call(state.wrapper[0], afterAnim);
-					} else {
+					else
 						state.wrapper.slideDown(duration, afterAnim);
-					}
+
 					state.anchor.trigger('DRPEx-open', {
 						relatedTarget : state.wrapper
 					});
-					if (!opt.container)
+
+					// Temporarily toggle display style for accurate dimension calculations
+					state.wrapper.css({
+						display : 'block',
+						visibility : 0
+					});
+					updateCalendarWidth();
+					if (!opt.container) {
+						calcPosition();
 						$(window).bind('resize.DRPEx scroll.DRPEx', calcPosition);
+					}
+					state.wrapper.css({
+						display : 'none',
+						visibility : 'initial'
+					});
+
 					if (opt.watchValueChange) {
 						var domChangeTimer = null;
 						state.anchor.bind('input.DRPEx', function () {
 							clearTimeout(domChangeTimer);
 							domChangeTimer = setTimeout(function () {
 									domChangeTimer = null;
-									var Values = parseStringDates(opt.getValue.call(state.anchor[0]));
-									if (Values)
-										applyDates(Values, true);
+									checkAndSetDate();
 								}, 200);
 						});
 					}
+
+					if (!opt.alwaysOpen)
+						$(document).bind('click.DRPEx', defocusClick);
 					return true;
 				}
 				return false;
 			}
+
 			function closeDatePicker(duration) {
 				if (!opt.alwaysOpen && state.active) {
 					state.active = false;
@@ -587,11 +600,11 @@
 							relatedTarget : state.wrapper
 						});
 					};
-					if (opt.customCloseAnimation) {
+					if (opt.customCloseAnimation)
 						opt.customCloseAnimation.call(state.wrapper[0], afterAnim);
-					} else {
+					else
 						state.wrapper.slideUp(duration, afterAnim);
-					}
+
 					state.anchor.trigger('DRPEx-close', {
 						relatedTarget : state.wrapper
 					});
@@ -599,10 +612,13 @@
 						$(window).unbind('resize.DRPEx scroll.DRPEx', calcPosition);
 					if (opt.watchValueChange)
 						state.anchor.unbind('input.DRPEx');
+					if (!opt.alwaysOpen)
+						$(document).unbind('click.DRPEx', defocusClick);
 					return true;
 				}
 				return false;
 			}
+
 			function parseStringDates(str) {
 				var vals = (str && str.constructor == String) ? str.trim() : undefined;
 				if (vals) {
@@ -621,24 +637,31 @@
 							break;
 					}
 					if (vidx != vals.length) {
-						if (vidx > 0) {
+						if (vidx > 0)
 							vals.splice(vidx);
-						} else {
+						else
 							vals = undefined;
-						}
 					}
 				}
 				return vals;
 			}
+
+			function getDateString(d) {
+				state.formatter.toDate().setTime(d);
+				return state.formatter.format(opt.format);
+			}
+
 			function applyDates(vals, silent) {
 				setDateRange(vals[0], vals.length > 1 ? vals[1] : vals[0], silent);
 			}
+
 			function checkAndSetDate() {
 				var Values = parseStringDates(opt.getValue.call(state.anchor[0]));
 				if (Values)
 					applyDates(Values, true);
 				resetMonthsView();
 			}
+
 			function updateCalendarWidth() {
 				var gapMargin = state.wrapper.find('.gap').css('margin-left');
 				var w1 = state.wrapper.find('.month1').width();
@@ -649,6 +672,7 @@
 				var w4 = state.wrapper.find('.drp_top-bar input').outerWidth();
 				state.wrapper.find('.drp_top-bar div').width(calendarWidth - w4 - 2);
 			}
+
 			function clearSelection(silent) {
 				if (state.selRange.start || state.selRange.end) {
 					state.selRange.start = false;
@@ -664,10 +688,12 @@
 				}
 				return false;
 			}
+
 			function clearHovering() {
 				state.wrapper.find('.day.hovering').removeClass('hovering');
 				state.wrapper.find('.date-range-length-tip').hide();
 			}
+
 			function dayHovering(day) {
 				if (state.selWeek)
 					return;
@@ -683,25 +709,23 @@
 						var hoverTime = parseInt(day.attr('SOD-time'));
 						state.wrapper.find('.day').each(function () {
 							var time = parseInt($(this).attr('SOD-time'));
-							if (time == hoverTime) {
+							if (time == hoverTime)
 								$(this).addClass('hovering');
-							} else {
+							else
 								$(this).removeClass('hovering');
-							}
+
 							if ((state.selRange.start < time && hoverTime >= time) ||
-								(state.selRange.start > time && hoverTime <= time)) {
+								(state.selRange.start > time && hoverTime <= time))
 								$(this).addClass('hovering');
-							} else {
+							else
 								$(this).removeClass('hovering');
-							}
 						});
 						var days = countDays(hoverTime, state.selRange.start);
 						if (opt.hoveringTooltip) {
-							if (typeof opt.hoveringTooltip == 'function') {
+							if (typeof opt.hoveringTooltip == 'function')
 								tooltip = opt.hoveringTooltip(days, state.selRange.start, hoverTime);
-							} else if (opt.hoveringTooltip === true && days > 1) {
+							else if (opt.hoveringTooltip === true && days > 1)
 								tooltip = days + ' ' + localize('days');
-							}
 						}
 					}
 				}
@@ -726,10 +750,10 @@
 						display : 'block',
 						'visibility' : 'visible'
 					});
-				} else {
+				} else
 					state.wrapper.find('.date-range-length-tip').hide();
-				}
 			}
+
 			function dayClicked(day) {
 				if (state.selWeek)
 					return;
@@ -780,6 +804,7 @@
 				showSelectedDays();
 				autoClose();
 			}
+
 			function weekSelectionHovering(startTime, endTime) {
 				state.wrapper.find('.day').each(function () {
 					var time = parseInt($(this).attr('SOD-time'));
@@ -793,13 +818,13 @@
 						$(this).removeClass('range-start');
 						$(this).removeClass('range-end');
 					}
-					if (startTime <= time && endTime >= time) {
+					if (startTime <= time && endTime >= time)
 						$(this).addClass('hovering');
-					} else {
+					else
 						$(this).removeClass('hovering');
-					}
 				});
 			}
+
 			function weekNumberClicked(week) {
 				if (opt.singleDate)
 					return;
@@ -833,6 +858,7 @@
 				showSelectedDays();
 				autoClose();
 			}
+
 			function weekNumberHovering(week) {
 				if (!state.selWeek)
 					return;
@@ -851,6 +877,7 @@
 					weekSelectionHovering(startTime, endTime);
 				}
 			}
+
 			function isValidTime(time, hovering) {
 				if (isDateOutOfBounds(time))
 					return false;
@@ -877,6 +904,7 @@
 				}
 				return true;
 			}
+
 			function updateSelectableRange() {
 				state.wrapper.find('.unselectable').removeClass('unselectable');
 				if (state.selRange.start) {
@@ -913,6 +941,7 @@
 				}
 				return true;
 			}
+
 			function applyAndClose() {
 				if (checkSelectionValid()) {
 					var dateRangeStr;
@@ -938,12 +967,14 @@
 				}
 				closeDatePicker(opt.animationTime);
 			}
+
 			function autoClose() {
 				if (checkSelectionValid()) {
 					if (opt.autoClose)
 						applyAndClose();
 				}
 			}
+
 			function checkSelectionValid() {
 				var valid = true;
 				var days = (state.selRange.start && state.selRange.end) ?
@@ -1017,15 +1048,15 @@
 					state.wrapper.find('.drp_top-bar').removeClass('error').addClass('normal');
 					state.wrapper.find('.apply-btn').removeClass('disabled').val(localize('apply-enabled'));
 				} else {
-					if (valid == undefined) {
+					if (valid == undefined)
 						state.wrapper.find('.drp_top-bar').removeClass('error').addClass('normal');
-					} else {
+					else
 						state.wrapper.find('.drp_top-bar').addClass('error').removeClass('normal');
-					}
 					state.wrapper.find('.apply-btn').addClass('disabled').val(localize('apply-disabled'));
 				}
 				return valid;
 			}
+
 			function showSelectedInfo(silent) {
 				state.wrapper.find('.start-day').html('...');
 				state.wrapper.find('.end-day').html('...');
@@ -1054,14 +1085,14 @@
 						});
 					}
 				} else if (!state.selRange.start) {
-					if (!silent) {
+					if (!silent)
 						state.anchor.trigger('DRPEx-change', {});
-					}
 				}
 
 				var normalmsg = state.wrapper.find('.drp_top-bar .normal-top');
 				normalmsg.attr('title', normalmsg.text());
 			}
+
 			function setDateRange(date1, date2, silent) {
 				var range = {
 					start : date1,
@@ -1074,11 +1105,10 @@
 					state.selRange.end = range.end.getTime();
 					if (opt.stickyMonths || (compareDay(range.start, range.end) > 0 &&
 							compareMonth(range.start, range.end) === 0)) {
-						if (opt.lookBehind) {
+						if (opt.lookBehind)
 							range.start = prevMonth(range.end);
-						} else {
+						else
 							range.end = nextMonth(range.start);
-						}
 					}
 					if (opt.stickyMonths) {
 						if (opt.dateRange.end !== false && compareMonth(range.end, opt.dateRange.end) > 0) {
@@ -1087,11 +1117,10 @@
 						}
 					} else {
 						if (compareMonth(range.start, range.end) === 0) {
-							if (opt.lookBehind) {
+							if (opt.lookBehind)
 								range.start = prevMonth(range.end);
-							} else {
+							else
 								range.end = nextMonth(range.start);
-							}
 						}
 					}
 					showMonth(range.start, 'month1');
@@ -1099,36 +1128,35 @@
 					showGap();
 
 					showSelectedInfo(silent);
-					if (silent) {
+					if (silent)
 						checkSelectionValid();
-					} else {
+					else
 						autoClose();
-					}
 				}
 			}
+
 			function showSelectedDays() {
 				if (!state.selRange.start && !state.selRange.end)
 					return;
 				state.wrapper.find('.day').each(function () {
 					var time = parseInt($(this).attr('SOD-time'));
 					if ((state.selRange.end && state.selRange.end >= time && state.selRange.start <= time) ||
-						(!state.selRange.end && state.selRange.start == time)) {
+						(!state.selRange.end && state.selRange.start == time))
 						$(this).addClass('checked');
-					} else {
+					else
 						$(this).removeClass('checked');
-					}
+
 					//add range-start class name to the first date selected
-					if (state.selRange.start == time) {
+					if (state.selRange.start == time)
 						$(this).addClass('range-start');
-					} else {
+					else
 						$(this).removeClass('range-start');
-					}
+
 					//add range-end
-					if (state.selRange.end == time) {
+					if (state.selRange.end == time)
 						$(this).addClass('range-end');
-					} else {
+					else
 						$(this).removeClass('range-end');
-					}
 				});
 				state.wrapper.find('.week-number').each(function () {
 					if (parseInt($(this).attr('SOW-time')) == state.selWeek) {
@@ -1140,14 +1168,20 @@
 						var weekdate = new Date(parseInt($(this).attr('SOW-time')));
 						var startTime = moment(weekdate).day(opt.startOfWeek ? 1 : 0).valueOf();
 						var endTime = moment(weekdate).day(opt.startOfWeek ? 7 : 6).valueOf();
-						if ((startTime >= state.selRange.start) && (endTime <= state.selRange.end)) {
+
+						if ((startTime >= state.selRange.start) && (endTime <= state.selRange.end))
 							$(this).addClass('week-ranged');
-						} else {
+						else
 							$(this).removeClass('week-ranged');
-						}
 					});
 				}
 			}
+
+			function nameMonth(d) {
+				state.formatter.toDate().setTime(d);
+				return state.formatter.format(state.monthFormat);
+			}
+
 			function showMonth(date, month) {
 				date = moment(date).startOf('month').toDate();
 				state.wrapper.find('.' + month + ' .month-name').html(nameMonth(date));
@@ -1157,28 +1191,25 @@
 				updateSelectableRange();
 				showSelectedDays();
 			}
-			function nameMonth(d) {
-				state.formatter.toDate().setTime(d);
-				return state.formatter.format(state.monthFormat);
-			}
-			function getDateString(d) {
-				state.formatter.toDate().setTime(d);
-				return state.formatter.format(opt.format);
-			}
+
 			function showGap() {
-				if (compareMonth(state.month2, state.month1) > 1) {
-					state.wrapper.addClass('has-gap').removeClass('no-gap').find('.gap').css('visibility', 'visible');
-				} else {
-					state.wrapper.removeClass('has-gap').addClass('no-gap').find('.gap').css('visibility', 'hidden');
-				}
+				if (compareMonth(state.month2, state.month1) > 1)
+					state.wrapper.addClass('has-gap').removeClass('no-gap')
+					.find('.gap').css('visibility', 'visible');
+				else
+					state.wrapper.removeClass('has-gap').addClass('no-gap')
+					.find('.gap').css('visibility', 'hidden');
+
 				var h1 = state.wrapper.find('table.month1').height();
 				var h2 = state.wrapper.find('table.month2').height();
 				state.wrapper.find('.gap').height(Math.max(h1, h2) + 10);
 			}
+
 			function redrawDatePicker() {
 				showMonth(state.month1, 'month1');
 				showMonth(state.month2, 'month2');
 			}
+
 			function getDefaultTime() {
 				var defaultTime = opt.defaultTime ? opt.defaultTime : new Date();
 				if (opt.dateRange.start && compareMonth(defaultTime, opt.dateRange.start) < 0) {
@@ -1187,6 +1218,7 @@
 					defaultTime = prevMonth(moment(opt.dateRange.end).toDate());
 				return defaultTime;
 			}
+
 			function resetMonthsView() {
 				var startTS = state.selRange.start;
 				var endTS = state.selRange.end || startTS;
@@ -1210,15 +1242,25 @@
 			function compareMonth(m1, m2) {
 				return moment(m1).startOf('month').diff(moment(m2).startOf('month'), 'month');
 			}
+
 			function compareDay(m1, m2) {
 				return moment(m1).diff(moment(m2), 'day');
 			}
+
 			function countDays(start, end) {
 				return Math.abs(compareDay(start, end)) + 1;
 			}
+
+			function isDateOutOfBounds(date) {
+				date = moment(date);
+				return (opt.dateRange.start && date.isBefore(opt.dateRange.start)) ||
+				(opt.dateRange.end && date.isAfter(opt.dateRange.end));
+			}
+
 			function nextMonth(month) {
 				return moment(month).add(1, 'month').toDate();
 			}
+
 			function prevMonth(month) {
 				return moment(month).add(-1, 'month').toDate();
 			}
@@ -1236,6 +1278,7 @@
 				}
 				return Ret + '>';
 			}
+
 			function createDom() {
 				var html =
 					tagGen('div', {
@@ -1479,11 +1522,7 @@
 				html += tagGen('/div');
 				return $(html);
 			}
-			function isDateOutOfBounds(date) {
-				date = moment(date);
-				return (opt.dateRange.start && date.isBefore(opt.dateRange.start)) ||
-				(opt.dateRange.end && date.isAfter(opt.dateRange.end));
-			}
+
 			function createMonthHTML(d) {
 				var days = [];
 
@@ -1577,6 +1616,7 @@
 				}
 				return html;
 			}
+
 			function showDayHTML(time, day) {
 				if (opt.showDateFilter && typeof opt.showDateFilter == 'function')
 					return opt.showDateFilter(time, day);

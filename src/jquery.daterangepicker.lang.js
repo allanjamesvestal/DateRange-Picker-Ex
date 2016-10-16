@@ -48,7 +48,7 @@
 					'default-more' : 'Jarak tanggal harus lebih lama dari %d hari',
 					'default-single' : 'Silakan pilih tanggal',
 					'default-less' : 'Jarak rentang tanggal tidak boleh lebih lama dari %d hari',
-					'default-range' : 'Rentang tanggal harus antara %d dan %d hari',
+					'default-range' : 'Rentang tanggal harus antara {minDays} dan {maxDays} hari',
 					'default-default' : 'Silakan pilih rentang tanggal'
 				},
 				'az' : {
@@ -80,7 +80,7 @@
 					'default-more' : '%d gündən çox bir tarix seçin',
 					'default-single' : 'Tarix seçin',
 					'default-less' : '%d gündən az bir tarix seçin',
-					'default-range' : '%d və %d gün aralığında tarixlər seçin',
+					'default-range' : '{minDays} və {maxDays} gün aralığında tarixlər seçin',
 					'default-default' : 'Tarix aralığı seçin'
 				},
 				'cn' : 'zh-cn',
@@ -122,7 +122,7 @@
 					'disabled-range' : '日期范围跨越了无法选定的日期',
 					'default-more' : '请选择大于%d天的日期范围',
 					'default-less' : '请选择小于%d天的日期范围',
-					'default-range' : '请选择%d天到%d天的日期范围',
+					'default-range' : '请选择{minDays}到{maxDays}天的日期范围',
 					'default-single' : '请选择一个日期',
 					'default-default' : '请选择一个日期范围'
 				},
@@ -155,7 +155,7 @@
 					'default-more' : 'Prosím zvolte rozsah data větší než %d dnů',
 					'default-single' : 'Prosím zvolte datum',
 					'default-less' : 'Prosím zvolte rozsah data menší než %d dnů',
-					'default-range' : 'Prosím zvolte rozsah data mezi %d a %d dny',
+					'default-range' : 'Prosím zvolte rozsah data mezi {minDays} a {maxDays} dny',
 					'default-default' : 'Prosím zvolte rozsah data'
 				},
 				'de' : {
@@ -187,7 +187,7 @@
 					'default-more' : 'Bitte mindestens %d Tage auswählen',
 					'default-single' : 'Bitte ein Datum auswählen',
 					'default-less' : 'Bitte weniger als %d Tage auswählen',
-					'default-range' : 'Bitte einen Datumsbereich zwischen %d und %d Tagen auswählen',
+					'default-range' : 'Bitte einen Datumsbereich zwischen {minDays} und {maxDays} Tagen auswählen',
 					'default-default' : 'Bitte ein Start- und Enddatum auswählen'
 				},
 				'es' : {
@@ -219,7 +219,7 @@
 					'default-more' : 'Por favor selecciona un rango mayor a %d días',
 					'default-single' : 'Por favor selecciona un día',
 					'default-less' : 'Por favor selecciona un rango menor a %d días',
-					'default-range' : 'Por favor selecciona un rango entre %d y %d días',
+					'default-range' : 'Por favor selecciona un rango entre {minDays} y {maxDays} días',
 					'default-default' : 'Por favor selecciona un rango de fechas.'
 				},
 				'fr' : {
@@ -251,7 +251,7 @@
 					'default-more' : 'Merci de choisir une intervalle supérieure à %d jours',
 					'default-single' : 'Merci de choisir une date',
 					'default-less' : 'Merci de choisir une intervalle inférieure %d jours',
-					'default-range' : 'Merci de choisir une intervalle comprise entre %d et %d jours',
+					'default-range' : 'Merci de choisir une intervalle comprise entre {minDays} et {maxDays} jours',
 					'default-default' : 'Merci de choisir une date'
 				},
 				'hu' : {
@@ -283,7 +283,7 @@
 					'default-more' : 'Válassz ki egy időszakot ami hosszabb mint %d nap',
 					'default-single' : 'Válassz egy napot',
 					'default-less' : 'Válassz ki egy időszakot ami rövidebb mint %d nap',
-					'default-range' : 'Válassz ki egy %d - %d nap hosszú időszakot',
+					'default-range' : 'Válassz ki egy {minDays} - {maxDays} nap hosszú időszakot',
 					'default-default' : 'Válassz ki egy időszakot'
 				},
 				'it' : {
@@ -315,7 +315,7 @@
 					'default-more' : 'Seleziona un intervallo maggiore di %d giorni',
 					'default-single' : 'Seleziona una data',
 					'default-less' : 'Seleziona un intervallo minore di %d giorni',
-					'default-range' : 'Seleziona un intervallo compreso tra i %d e i %d giorni',
+					'default-range' : 'Seleziona un intervallo compreso tra i {minDays} e i {maxDays} giorni',
 					'default-default' : 'Seleziona un intervallo di date'
 				},
 				'ko' : {
@@ -348,7 +348,7 @@
 					'default-more' : '날짜 범위를 %d 일보다 길게 선택해 주세요',
 					'default-single' : '날짜를 선택해 주세요',
 					'default-less' : '%d 일보다 작은 날짜를 선택해 주세요',
-					'default-range' : '%d와 %d 일 사이의 날짜 범위를 선택해 주세요',
+					'default-range' : '{minDays} 와 {maxDays} 일 사이의 날짜 범위를 선택해 주세요',
 					'default-default' : '날짜 범위를 선택해 주세요'
 				},
 				'no' : {
@@ -381,7 +381,7 @@
 					'default-more' : 'Vennligst velg ein datoperiode lengre enn %d dager',
 					'default-single' : 'Vennligst velg ein dato',
 					'default-less' : 'Vennligst velg ein datoperiode mindre enn %d dager',
-					'default-range' : 'Vennligst velg ein datoperiode mellom %d og %d dager',
+					'default-range' : 'Vennligst velg ein datoperiode mellom {minDays} og {maxDays} dager',
 					'default-default' : 'Vennligst velg ein datoperiode'
 				},
 				'nl' : {
@@ -414,7 +414,7 @@
 					'default-more' : 'Selecteer een interval langer dan %dagen',
 					'default-single' : 'Selecteer een datum',
 					'default-less' : 'Selecteer een interval minder dan %d dagen',
-					'default-range' : 'Selecteer een interval tussen %d en %d dagen',
+					'default-range' : 'Selecteer een interval tussen {minDays} en {maxDays} dagen',
 					'default-default' : 'Selecteer een interval'
 				},
 				'ru' : {
@@ -447,7 +447,7 @@
 					'default-more' : 'Пожалуйста выберите диапазон больше %d дней',
 					'default-single' : 'Пожалуйста выберите дату',
 					'default-less' : 'Пожалуйста выберите диапазон меньше %d дней',
-					'default-range' : 'Пожалуйста выберите диапазон между %d и %d днями',
+					'default-range' : 'Пожалуйста выберите диапазон между {minDays} и {maxDays} днями',
 					'default-default' : 'Пожалуйста выберите диапазон'
 				},
 				'pl' : {
@@ -480,7 +480,7 @@
 					'default-more' : 'Wybierz okres dłuższy niż %d dni',
 					'default-single' : 'Wybierz datę',
 					'default-less' : 'Wybierz okres krótszy niż %d dni',
-					'default-range' : 'Wybierz okres trwający od %d do %d dni',
+					'default-range' : 'Wybierz okres trwający od {minDays} do {maxDays} dni',
 					'default-default' : 'Wybierz okres'
 				},
 				'se' : {
@@ -513,7 +513,7 @@
 					'default-more' : 'Välj ett datumintervall längre än %d dagar',
 					'default-single' : 'Välj ett datum',
 					'default-less' : 'Välj ett datumintervall mindre än %d dagar',
-					'default-range' : 'Välj ett datumintervall mellan %d och %d dagar',
+					'default-range' : 'Välj ett datumintervall mellan {minDays} och {maxDays} dagar',
 					'default-default' : 'Välj ett datumintervall'
 				},
 				'pt' : //Portuguese (European)
@@ -548,7 +548,7 @@
 					'default-more' : 'Selecione um período superior a %d dias',
 					'default-single' : 'Selecione uma data',
 					'default-less' : 'Selecione um período inferior a %d dias',
-					'default-range' : 'Selecione um período de %d a %d dias',
+					'default-range' : 'Selecione um período de {minDays} a {maxDays} dias',
 					'default-default' : 'Selecione um período'
 				},
 				'zh-tw' : // traditional chinese
@@ -581,7 +581,7 @@
 					'more-than' : '所選日期範圍不能小於%d天',
 					'default-more' : '請選擇大於%d天的日期範圍',
 					'default-less' : '請選擇小於%d天的日期範圍',
-					'default-range' : '請選擇%d天到%d天的日期範圍',
+					'default-range' : '請選擇{minDays}天到{maxDays}天的日期範圍',
 					'default-single' : '請選擇一個日期',
 					'default-default' : '請選擇一個日期範圍'
 				},
@@ -609,11 +609,11 @@
 					'next-week' : '来週',
 					'next-month' : '来月',
 					'next-year' : '来年',
-					'less-than' : '日付の範囲は ％d 日以上にすべきではありません',
-					'more-than' : '日付の範囲は ％d 日を下回ってはいけません',
-					'default-more' : '％d 日よりも長い期間を選択してください',
-					'default-less' : '％d 日未満の期間を選択してください',
-					'default-range' : '％d と％ d日の間の日付範囲を選択してください',
+					'less-than' : '日付の範囲は %d 日以上にすべきではありません',
+					'more-than' : '日付の範囲は %d 日を下回ってはいけません',
+					'default-more' : '%d 日よりも長い期間を選択してください',
+					'default-less' : '%d 日未満の期間を選択してください',
+					'default-range' : '{minDays} と {maxDays} 日の間の日付範囲を選択してください',
 					'default-single' : '日付を選択してください',
 					'default-default' : '日付範囲を選択してください'
 				},
@@ -647,7 +647,7 @@
 					'default-more' : 'Vælg datointerval længere end %d dage',
 					'default-single' : 'Vælg dato',
 					'default-less' : 'Vælg datointerval mindre end %d dage',
-					'default-range' : 'Vælg datointerval mellem %d og %d dage',
+					'default-range' : 'Vælg datointerval mellem {minDays} og {maxDays} dage',
 					'default-default' : 'Vælg datointerval'
 				}
 			}, $.DRPExLang);
