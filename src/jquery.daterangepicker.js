@@ -263,10 +263,10 @@
 				state.localizer = localizer[1];
 
 				var _locale = state.formatter.locale();
-				if (!state.formatter.locale(opt.language)._locale) {
-					if (!state.formatter.locale(state.locale)._locale)
-						if (!state.formatter.locale(fblocale)._locale)
-							if (!state.formatter.locale(locale)._locale)
+				if (!opt.language || state.formatter.locale(opt.language).locale() !== opt.language) {
+					if (state.formatter.locale(state.locale).locale() !== state.locale)
+						if (state.formatter.locale(locale).locale() !== locale)
+							if (state.formatter.locale(fblocale).locale() !== fblocale)
 								state.formatter.locale(_locale);
 				}
 				state.monthFormat = state.formatter.localeData().longDateFormat('LL')
