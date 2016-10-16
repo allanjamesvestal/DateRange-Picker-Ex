@@ -1,7 +1,7 @@
 {
 	"name" : "daterange-picker-ex",
 	"description" : "DateRangePicker-Ex is a jQuery plugin that allows user to select a date range.",
-	"version" : "1.1.3",
+	"version" : "1.1.4",
 	"license" : "MIT",
 	"keywords" : [
 		"jquery",

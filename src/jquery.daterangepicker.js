@@ -333,7 +333,7 @@
 				state.wrapper.delegate('.week-number', 'mouseenter', function (evt) {
 					weekNumberHovering($(this));
 				});
-				state.wrapper.delegate('.month-wrapper', 'mouseleave', function () {
+				state.wrapper.delegate('.month-wrapper table tbody', 'mouseleave', function () {
 					state.wrapper.find('.range-tip').hide();
 					clearHovering();
 				});
@@ -1047,9 +1047,13 @@
 					state.wrapper.find('.top-bar').removeClass('error').addClass('normal');
 					state.wrapper.find('.apply-btn').removeClass('disabled').val(localize('apply-enabled'));
 				} else {
-					if (valid == undefined)
-						state.wrapper.find('.top-bar').removeClass('error').addClass('normal');
-					else
+					if (valid == undefined) {
+						state.wrapper.find('.top-bar').removeClass('error');
+						if (state.selRange.start)
+							state.wrapper.find('.top-bar').addClass('normal');
+						else
+							state.wrapper.find('.top-bar').removeClass('normal');
+					} else
 						state.wrapper.find('.top-bar').addClass('error').removeClass('normal');
 					state.wrapper.find('.apply-btn').addClass('disabled').val(localize('apply-disabled'));
 				}
@@ -1061,12 +1065,10 @@
 				state.wrapper.find('.end-day').html('...');
 				state.wrapper.find('.selected-days').hide();
 
-				if (state.selRange.start) {
+				if (state.selRange.start)
 					state.wrapper.find('.start-day').html(getDateString(state.selRange.start));
-				}
-				if (state.selRange.end) {
+				if (state.selRange.end)
 					state.wrapper.find('.end-day').html(getDateString(state.selRange.end));
-				}
 
 				if (state.selRange.start && opt.singleDate) {
 					if (!silent) {
@@ -1600,18 +1602,16 @@
 							tagGen('div', {
 								'SOD-time' : today.time,
 								'data-tooltip' : today.tooltip,
-								'class' : 'day'
-								 + ' ' + today.type
-								 + ' ' + today.extraClass
-								 + ' ' + (today.valid ? 'valid' : (today.valid === false ? 'invalid' : 'skipped'))
-								 + ((now && now.date() == today.day) ? ' real-today' : '')
+								'class' : ['day', today.type, today.extraClass,
+									(today.valid ? 'valid' : (today.valid === false ? 'invalid' : 'skipped')),
+									((now && now.date() == today.day) ? 'real-today' : '')]
 							}, showDayHTML(today.time, today.day)));
 					}
 					if (opt.showWeekNumbers) {
 						html += tagGen('td', {},
 							tagGen('div', {
-								'class' : 'week-number'
-								 + ' ' + (validWeek ? 'valid' : 'invalid'),
+								'class' : ['week-number',
+									(validWeek ? 'valid' : 'invalid')],
 								'SOW-time' : headDay.time
 							}, opt.getWeekNumber(headDay.date)));
 					}

@@ -9,17 +9,18 @@ DateRange-Picker-Ex is a jQuery plugin that allows user to select a date range.
 It is nearly complete rewrite of the original [jQuery Date Range Picker Plugin](https://github.com/longbill/jquery-date-range-picker).
 
 New features:
-- Robust internal date keeping logics
-- Slightly improved visual experiences (localized month formatting, based on moment)
-- Improved interactive control experiences
-- Specializes date range entrying, leave the time entry to [TimeDropper-Ex](https://adam5wu.github.io/TimeDropper-Ex/)
+- Robust internal date keeping logics, based of MomentJS
+- Improved UI visual experiences and interactive control experiences
+	- React to window scrolling and resizing, maintain widget visibility
+	- Localized calendar month, date formatting and start-of-week, based on MomentJS
+- Specializes date range entrying, leave the time entry to [TimeDropper-Ex](https://github.com/Adam5Wu/TimeDropper-Ex)
 
-[Documentation & Demo](https://adam5wu.github.io/DateRange-Picker-Ex/)
+## [Documentation & Demo](https://adam5wu.github.io/DateRange-Picker-Ex/)
 
 ## License
 This project is released under MIT LICENSE
 
-## Setup for development
+## Setup for Development
 * Install node.js
 	* [Ubuntu/Mac](https://github.com/creationix/nvm)
 	* [Windows](https://nodejs.org/en/download/)

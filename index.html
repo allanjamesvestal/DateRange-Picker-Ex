@@ -34,6 +34,12 @@
 			background-color:#eee;
 			border-radius:4px;
 		}
+		pre
+		{
+			font-size:12px;
+			background:#eee;
+			padding:0.5em;
+		}
 		</style>
 	</head>
 	<body>
@@ -42,31 +48,33 @@
 				<a href="https://github.com/Adam5Wu/DateRange-Picker-Ex">[Repository]</a>
 			</h4></h1></div>
 			<p>
-				jQuery Date Range Picker is a jQuery plugin that allows user to select a date range.
+				jQuery Date Range Picker is a jQuery plugin that allows user to select a date range. <br>
 			</p>
 			<p>
 				Requires
 				<a href="http://jquery.com/" target=_blank>jQuery</a> 1.4.2+ (MIT LICENSE),
 				<a href="http://momentjs.com/" target=_blank>MomentJS</a> 2.9.0+ (MIT LICENSE)
 			</p>
+			Compatible Browsers:
+			<ul>
+				<li>Google Chrome 30+
+				<li>Mozilla Firefox 30+
+				<li>Microsoft Edge
+				<li>Microsoft Internet Explorer 9+
+				<li>Opera 20+
+				<li>Safari 4+
+			</ul>
 			<p>
-				Compatible Browsers:
-				<ul>
-					<li>Google Chrome 30+
-					<li>Mozilla Firefox 30+
-					<li>Microsoft Edge
-					<li>Microsoft Internet Explorer 9+
-					<li>Opera 20+
-					<li>Safari 4+
-				</ul>
-			</p>
-			<p>
-				Supports multi-language, you can choose a defined language or set it to auto-detect mode. <br>
+				Supports multi-language, you can choose a pre-defined language or set it to auto-detect mode. <br>
 				You can also define new languages for it.
 			</p>
 			<p>
-				The HTML DOMs generated is fully CSS styled, you can change the skin by editting the CSS file easily.
-			<p>
+				Easily customizeable colors and style to adopt to arbitrary theme. <br>
+				Refer to <a href="src/daterangepicker.slate.delta.css">the "Slate" delta CSS</a> for example.
+			</p>
+			<span style="padding:0.5em;border:1px solid grey;border-radius:1em">
+				Interested in interactive time entry? Checkout <a href="https://adam5wu.github.io/TimeDropper-Ex/">TimeDropper-Ex</a>.
+			</span>
             <h2 id="installation">Installation</h2>
 <pre>
 &lt;link rel="stylesheet" type="text/css" href="dist/daterangepicker.min.css">
@@ -78,9 +86,9 @@
 &lt;script type="text/javascript" src="dist/jquery.daterangepicker.lang.min.js">&lt;/script>
 </pre>
             <h2 id="demonstrations">Demonstrations</h2>
-			<div class="demo">
-				<button id="add-slate">Use Slate Color Theme</button>
-				<button id="remove-slate">Remove Slate Color Theme</button>
+			<div>
+				<button id="add-slate">Use "Slate" Theme</button>
+				<button id="remove-slate">Remove "Slate" Theme</button>
 			</div>
 			<div class="demo">
 				Default settings: <input id="date-range0" size="40" value="">
@@ -572,7 +580,7 @@ $('#date-range16-reset').click(function(evt)
 <b>Usage:</b> $('#dom-id').dateRangePicker(configObject);
 </pre>
 			<p>
-				The default configuration object is:<br>
+				The default configurations are:
 <pre>
 {
 	autoStart : false,
@@ -624,7 +632,8 @@ $('#date-range16-reset').click(function(evt)
 }
 </pre>
 			</p>
-			<h3>You can use the following keys in the configObject to overwrite the default configuration:</h3>
+			<p>
+				Configuration key definitions are:
 <pre>
 <b>format (String)</b>
 	<i>The date format string used for MomentJS.
@@ -698,8 +707,10 @@ $('#date-range16-reset').click(function(evt)
 <b>getWeekNumber (Function(Date object))</b>
 	<i>the function called to generate the week number. the first parameter will be the first day of a week</i>
 </pre>
+			</p>
 			<h2>Events</h2>
-			<p>events will be triggerred on the date range picker DOM</p>
+			<p>
+				Events can be subscribed as the following:
 <pre>
 $('#dom-id')
 .dateRangePicker()
@@ -749,6 +760,7 @@ $('#dom-id')
 	console.log('after open');
 })
 </pre>
+			</p>
 			<h2>APIs</h2>
 <pre>
 //after you called  $(dom).dateRangePicker();
