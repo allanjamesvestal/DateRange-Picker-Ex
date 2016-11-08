@@ -1,10 +1,11 @@
 body {
 	position: relative;
+	margin: 0;
 }
 .dr-picker
 {
 	font-size: 12px;
-	font-family: Arial,sans-serif;
+	font-family: Arial, sans-serif;
 	position: absolute;
 	z-index: 1;
 	border: 1px solid #456;
@@ -41,11 +42,6 @@ body {
 	color: #789;
 	font-weight: 700;
 }
-.dr-picker a
-{
-	color: #6AE;
-	text-decoration: underline;
-}
 .dr-picker .month-name
 {
 	text-transform: uppercase;
@@ -81,9 +77,17 @@ body {
 {
 	width: 27px;
 }
+.dr-picker .month-wrapper table tbody td>div
+{
+	-webkit-transition: all 0.25s linear 0s;
+	-moz-transition: all 0.25s linear 0s;
+	-ms-transition: all 0.25s linear 0s;
+	transition: all 0.25s linear 0s;
+}
 .dr-picker .month-wrapper table tbody td>div:hover
 {
-	background: #345;
+	outline: 1px solid #567;
+	box-shadow: 0 0 5px #9AE;
 }
 .dr-picker .month-wrapper table .day
 {
@@ -136,7 +140,8 @@ body {
 .dr-picker .month-wrapper table .unselectable:hover,
 .dr-picker .month-wrapper table .skipped:hover
 {
-	background: transparent;
+	outline: none;
+	box-shadow: none;
 }
 .dr-picker .month-wrapper table .week-name
 {
@@ -158,6 +163,10 @@ body {
 {
 	color: #9DD;
 }
+.dr-picker .month-wrapper table .day.toMonth.invalid.weekend
+{
+	color: #466 !important;
+}
 .dr-picker .month-wrapper table .day.nextMonth,
 .dr-picker .month-wrapper table .day.lastMonth
 {
@@ -175,6 +184,7 @@ body {
 .dr-picker .month-wrapper table .day.real-today.hovering
 {
 	background-color: #44C;
+	color: #CEF;
 }
 .dr-picker .month-wrapper table .day.real-today.invalid.checked,
 .dr-picker .month-wrapper table .day.real-today.invalid.hovering
@@ -199,8 +209,8 @@ body {
 .dr-picker .month-wrapper table .week-ranged
 {
 	color: #49E;
-	background: #456;
 	font-weight: bold;
+	background: #456;
 }
 .dr-picker .month-wrapper table .week-ranged.invalid,
 .dr-picker .month-wrapper table .week-ranged.unselectable

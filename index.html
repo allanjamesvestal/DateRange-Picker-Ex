@@ -202,8 +202,8 @@
 	},
 	setValue : function(s,s1,s2)
 	{
-		$('#date-range200').val(s1);
-		$('#date-range201').val(s2);
+		$('#date-range200').val(s1[1]);
+		$('#date-range201').val(s2[1]);
 	}
 }				
 </pre>
@@ -279,6 +279,7 @@
 				<a href="#" class="show-option">Show Config</a>
 <pre class="options">
 {
+	inline : true,
 	container : $('#date-range12-container'),
 	alwaysOpen : true
 	autoClose : true
@@ -360,7 +361,7 @@ $('#date-range16').dateRangePicker(
 {
 	format : 'YYYY-MM-DD'
 }).bind('DRPEx-change', function(evt, obj) {
-	alert('date1: ' + obj.date1 + ' / date2: ' + obj.date2);
+	alert('start: ' + obj.start + ' / end: ' + obj.end);
 });
 $('#date-range16-open').click(function(evt)
 {
@@ -375,12 +376,12 @@ $('#date-range16-close').click(function(evt)
 $('#date-range16-set').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('DRPEx').setDateRange('2013-11-20','2014-08-25');
+	$('#date-range16').data('DRPEx').setRange('2013-11-20','2014-08-25');
 });
 $('#date-range16-set-silent').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('DRPEx').setDateRange('2014-11-03','2015-02-12', true);
+	$('#date-range16').data('DRPEx').setRange('2014-11-03','2015-02-12', true);
 });
 $('#date-range16-clear').click(function(evt)
 {
@@ -395,7 +396,7 @@ $('#date-range16-destroy').click(function(evt)
 $('#date-range16-reset').click(function(evt)
 {
 	evt.stopPropagation();
-	$('#date-range16').data('DRPEx').resetMonthsView();
+	$('#date-range16').data('DRPEx').resetView();
 });
 </pre>
 			</div>
@@ -713,24 +714,16 @@ $('#date-range16-reset').click(function(evt)
 <pre>
 $('#dom-id')
 .dateRangePicker()
-.bind('DRPEx-first-date', function(event, obj)
-{
-	/* This event will be triggered when first date is selected */
-	console.log(obj);
-	// obj will be something like this:
-	// {
-	// 		date1: (Date object of the earlier date)
-	// }
-})
 .bind('DRPEx-change',function(event,obj)
 {
 	/* This event will be triggered when second date is selected */
 	console.log(obj);
 	// obj will be something like this:
 	// {
-	// 		date1: (Date object of the earlier date),
-	// 		date2: (Date object of the later date),
-	//	 	value: "2013-06-05 to 2013-06-07"
+	// 		[start: (Date object of the earlier date),]
+	// 		[end: (Date object of the later date),]
+	// or
+	// 		[date: (Single date object)]
 	// }
 })
 .bind('DRPEx-apply',function(event,obj)
@@ -766,7 +759,7 @@ $('#dom-id')
 $(dom).data('DRPEx')
     //set date range, two date strings should follow the `format` in config object,
     //set the third argument to be `true` if you don't want this method to trigger a `DRPEx-change` event.
-	.setDateRange('2013-11-20','2013-11-25');
+	.setRange('2013-11-20','2013-11-25');
 	//set the start date to the specified date
 	.setStart('2013-11-20');
 	//set the end date to the specified date
@@ -775,7 +768,7 @@ $(dom).data('DRPEx')
 	.clear();		// clear date range
 	.close();		// close date range picker overlay
 	.open();		// open date range picker overlay
-	.resetMonthsView();	// reset to default months
+	.resetView();	// reset to default months
 	.destroy();		// destroy all date range picker related things
 </pre>
 		</div>

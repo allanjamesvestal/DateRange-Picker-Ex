@@ -9,10 +9,6 @@
 {
 	color: #789;
 }
-.dr-picker a
-{
-	color: #6AE;
-}
 .dr-picker .month-wrapper
 {
 	border: 1px solid #567;
@@ -25,7 +21,8 @@
 }
 .dr-picker .month-wrapper table tbody td>div:hover
 {
-	background: #345;
+	outline: 1px solid #567;
+	box-shadow: 0 0 5px #9AE;
 }
 .dr-picker .month-wrapper table .day
 {
@@ -78,6 +75,10 @@
 .dr-picker .month-wrapper table .day.toMonth.valid.weekend
 {
 	color: #9DD;
+}
+.dr-picker .month-wrapper table .day.toMonth.invalid.weekend
+{
+	color: #466 !important;
 }
 .dr-picker .month-wrapper table .day.real-today
 {
