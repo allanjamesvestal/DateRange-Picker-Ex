@@ -14,6 +14,7 @@ New features:
 	- React to window scrolling and resizing, maintain widget visibility
 	- Localized calendar month, date formatting and start-of-week, based on MomentJS
 - Specializes date range entrying, leave the time entry to [TimeDropper-Ex](https://github.com/Adam5Wu/TimeDropper-Ex)
+	- For comprehensive datetime range entry, please try [DateTimeRanger](https://github.com/Adam5Wu/DateTimeRanger)
 
 ## [Documentation & Demo](https://adam5wu.github.io/DateRange-Picker-Ex/)
 
