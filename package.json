@@ -11,14 +11,15 @@
 		"rangepicker",
 		"daterangepicker"
 	],
+	"main": "./dist/jquery.daterangepicker.min.js",
 	"repository" : {
 		"type" : "git",
-		"url" : "git://github.com/Adam5Wu/DateRange-Picker-Ex.git"
+		"url" : "git://github.com/allanjamesvestal/DateRange-Picker-Ex.git"
 	},
 	"bugs" : {
-		"url" : "https://github.com/Adam5Wu/DateRange-Picker-Ex/issues"
+		"url" : "https://github.com/allanjamesvestal/DateRange-Picker-Ex/issues"
 	},
-	"homepage" : "https://adam5wu.github.io/DateRange-Picker-Ex/",
+	"homepage" : "https://allanjamesvestal.github.io/DateRange-Picker-Ex/",
 	"maintainers" : [
 		"Zhenyu Wu <Adam_5Wu@hotmail.com>"
 	],
@@ -31,7 +32,8 @@
 	},
 	"author" : "Chunlong <longbill.cn@gmail.com>",
 	"contributors" : [
-		"Zhenyu Wu <Adam_5Wu@hotmail.com>"
+		"Zhenyu Wu <Adam_5Wu@hotmail.com>",
+		"Allan James Vestal <ajvestal@dallasnews.com>",
 	],
 	"dependencies" : {
 		"jquery" : ">=1.4.2",
