@@ -142,7 +142,7 @@
 				locale: 'default',
 				localizer: {},
 				fblocalizer: {},
-				formatter: moment(),
+				momentObj: moment,
 				monthFormat: '??',
 
 				selRange: {
@@ -275,21 +275,21 @@
 				state.locale = localizer[0];
 				state.localizer = localizer[1];
 
-				var _locale = state.formatter.locale();
-				if (!opt.language || state.formatter.locale(opt.language).locale() !== opt.language) {
-					if (state.formatter.locale(state.locale).locale() !== state.locale)
-						if (state.formatter.locale(locale).locale() !== locale)
-							if (state.formatter.locale(fblocale).locale() !== fblocale)
-								state.formatter.locale(_locale);
+				var _locale = state.momentObj().locale();
+				if (!opt.language || state.momentObj().locale(opt.language).locale() !== opt.language) {
+					if (state.momentObj().locale(state.locale).locale() !== state.locale)
+						if (state.momentObj().locale(locale).locale() !== locale)
+							if (state.momentObj().locale(fblocale).locale() !== fblocale)
+								state.momentObj().locale(_locale);
 				}
-				state.monthFormat = state.formatter.localeData().longDateFormat('LL')
+				state.monthFormat = state.momentObj().localeData().longDateFormat('LL')
 					.replace(/Y(\s*)[^YMD]*D[^M]*/, 'Y$1')
 					.replace(/M(\s*)[^YMD]*D[^Y]*/, 'M$1')
 					.replace(/[^YM]*D[^YM]*/, '');
 
 				// Derive startOfWeek
 				if (opt.startOfWeek === undefined)
-					opt.startOfWeek = (state.formatter.startOf('week').isoWeekday() === 7 ? 0 : 1);
+					opt.startOfWeek = (state.momentObj().startOf('week').isoWeekday() === 7 ? 0 : 1);
 
 				state.wrapper = createDom($('.dr-picker').length);
 				(opt.container || $('body')).append(state.wrapper);
@@ -646,7 +646,7 @@
 
 					var vidx = 0;
 					while (vidx < vals.length) {
-						var parsed = moment(vals[vidx], opt.format, state.formatter.locale(), true);
+						var parsed = moment(vals[vidx], opt.format, state.momentObj().locale(), true);
 						if (!parsed.isValid())
 							break;
 						vals[vidx] = parsed.toDate();
@@ -667,8 +667,7 @@
 			}
 
 			function getDateString(d) {
-				state.formatter.toDate().setTime(d);
-				return state.formatter.format(opt.format);
+				return state.momentObj(d, 'x').format(opt.format);
 			}
 
 			function applyDates(vals, silent) {
@@ -1099,8 +1098,27 @@
 							event_payload['date'] = new Date(state.selRange.start);
 					}
 				} else {
-					state.wrapper.find('.selected-days').show()
-					.find('.selected-days-num').html(countDays(state.selRange.end, state.selRange.start));
+					var selectedDaysContainer = state.wrapper.find('.selected-days')
+					if (state.selRange.end !== false) {
+						var dayCount = countDays(
+							state.selRange.end,
+							state.selRange.start
+						);
+
+						selectedDaysContainer.show();
+						selectedDaysContainer
+							.find('.selected-days-num')
+							.html(dayCount);
+
+						selectedDaysContainer
+							.find('.days-label')
+							.html(
+								(dayCount === 1) ? localize('day') : localize('days')
+							);
+					} else {
+						selectedDaysContainer.hide();
+					}
+
 					if (!silent) {
 						event_payload = {};
 						if (state.selRange.start)
@@ -1180,8 +1198,7 @@
 			}
 
 			function nameMonth(d) {
-				state.formatter.toDate().setTime(d);
-				return state.formatter.format(state.monthFormat);
+				return state.momentObj(d).format(state.monthFormat);
 			}
 
 			function showMonth(date, month) {
@@ -1261,7 +1278,7 @@
 			}
 
 			function compareDay(m1, m2) {
-				return moment(m1).diff(moment(m2), 'day');
+				return moment(m1, 'x').diff(moment(m2, 'x'), 'day');
 			}
 
 			function countDays(start, end) {
@@ -1336,7 +1353,10 @@
 							}) + ' ('
 							 + tagGen('span', {
 								'class': 'selected-days-num'
-							}, 'X') + ' ' + localize('days') + ')'
+							}, 'X') + ' '
+							 + tagGen('span', {
+								'class': 'days-label'
+							}, localize('days')) + ')'
 							 + tagGen('/i');
 						}
 						html += tagGen('/div');
