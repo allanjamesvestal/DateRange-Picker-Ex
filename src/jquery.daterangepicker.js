@@ -646,7 +646,7 @@
 
 					var vidx = 0;
 					while (vidx < vals.length) {
-						var parsed = moment(vals[vidx], opt.format, state.momentObj().locale(), true);
+						var parsed = moment(vals[vidx], opt.format, state.momentObj().locale());
 						if (!parsed.isValid())
 							break;
 						vals[vidx] = parsed.toDate();
